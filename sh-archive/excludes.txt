@@ -1,0 +1,10 @@
+/tmp/*
+/Network/*
+/cores/*
+*/.Trashes
+/automount/*
+/private/tmp/*
+/private/var/run/*
+/private/var/spool/postfix/*
+/private/var/vm/*
+.Spotlight-*/
