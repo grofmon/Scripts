@@ -1,0 +1,10 @@
+.DS_Store
+.localized
+.TemporaryItems
+.VolumeIcon.icns
+tmp
+"Virtual Machines"
+"Virtual Machines.localized
+._*
+"Quicken Data"
+"Quicken Backup"
