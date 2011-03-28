@@ -1,74 +1,43 @@
---Logging
-set logScript to load script alias ((path to library folder from user domain as string) & "Scripts:Utilities:SysLog.scpt")
-tell application "Finder"
-	set thisPath to path to me
-	set thisScript to name of file thisPath as text
-end tell
-
 -- Get the IP address
-set en0Ip to do shell script "/sbin/ifconfig en0 | grep 'inet ' | awk '{print $2}'"
-set en1Ip to do shell script "/sbin/ifconfig en1 | grep 'inet ' | awk '{print $2}'"
+set theIp to do shell script "/sbin/ifconfig  | grep 'inet'| grep -v '127.0.0.1' | grep -v 'inet6' | awk '{ print $2}'" -- add this to get the first octet " | cut -d. -f1"
 
 -- Local Variables
-set pathEngineering to "smb://inverness1.echostar.com/engineering"
-set path2200 to "smb://inverness1.echostar.com/engineering/software/2200"
-set pathShared to "smb://inverness1.echostar.com/shared"
-set pathMorpheus to "smb://edn-data2.echostar.com/morpheus"
-set pathLinux to "smb://10.79.97.251/linux"
-set pathCcshare to "smb://10.79.97.251/ccshare"
-set pathCablebox to "smb://10.79.97.251/ccshare/linux/c_files/cablebox"
-set thisMsg to thisScript & ": Mounting "
+set Engineering to "smb://inverness1/engineering"
+set Shared to "smb://inverness1/shared"
+set Software to "smb://inverness1/engineering/software"
+set Linux to "smb://linux-pc-251/linux"
+set Ccshare to "smb://linux-pc-251/ccshare"
+-- Local lists
+set theMountList to {Software, Shared, Linux, Engineering, Ccshare}
+set theDiskList to {"software", "shared", "linux", "engineering", "ccshare"}
+-- Loop variable
+set loopVar to count theMountList
 
--- Tell Finder what to do
-tell application "Finder"
-	-- If we are connected to an EchoStar Network, the ip address will start with 10.7x
-	set eNetwork to "false"
-	if en0Ip contains "10." then
-		set eNetwork to "true"
-	end if
-	if en1Ip contains "10." then
-		set eNetwork to "true"
-	end if
-	if eNetwork is "true" then
-		try
-			sysLog(thisMsg & path2200) of logScript
-			mount volume path2200
-		end try
-		
-		try
-			sysLog(thisMsg & pathCablebox) of logScript
-			mount volume pathCablebox
-		end try
-		
-		try
-			sysLog(thisMsg & pathCcshare) of logScript
-			mount volume pathCcshare
-		end try
-		
-		try
-			sysLog(thisMsg & pathLinux) of logScript
-			mount volume pathLinux
-		end try
-		
-		(*
-		try
-			sysLog(thisMsg & pathEngineering) of logScript
-			mount volume pathEngineering
-		end try
-*)
-		(*
-		try
-			sysLog(thisMsg & pathShared) of logScript
-			mount volume pathShared
-		end try
-*)
-		(*
-		try
-			sysLog(thisMsg & pathMorpheus) of logScript
-			mount volume pathMorpheus
-		end try
-*)
-	end if
-end tell
+-- If we are connected to an EchoStar Network, the ip address will start with 10.73 or 10.79
+if theIp contains "10.73" or theIp contains "10.79" then
+	-- Tell Finder what to do
+	tell application "Finder"
+		-- Loop through the mounts
+		repeat loopVar times
+			-- mount if NOT mounted
+			if not (exists disk (item loopVar of theDiskList)) then
+				mount volume (item loopVar of theMountList)
+			end if
+			-- Update the loop variable
+			set loopVar to (loopVar - 1)
+		end repeat
+	end tell
+else
+	tell application "Finder"
+		repeat loopVar times
+			-- Eject if already mounted
+			if (exists disk (item loopVar of theDiskList)) then
+				eject (item loopVar of theDiskList)
+			end if
+			-- Update the loop variable
+			set loopVar to (loopVar - 1)
+		end repeat
+	end tell
+end if
 
 
