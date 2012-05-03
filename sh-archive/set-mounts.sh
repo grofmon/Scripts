@@ -1,19 +1,12 @@
 #!/bin/sh
 
-MOUNT="/Users/monty/Library/Scripts/MountEchostar.scpt"
-NETWORK="/Users/monty/Library/Scripts/NetworkSettings.scpt"
-
-# Need the proper DNS servers to mount EchoStar network drives
-if [ -f "$NETWORK" ]; then
-    osascript "$NETWORK" $@
-fi
-
+SCRIPT="/Users/monty/Library/Scripts/MountEchostar.scpt"
 
 # Mount/unmount EchoStar networked drives
 # Pass argument 'clear' to unmount
 
-if [ -f "$MOUNT" ]; then
-    osascript "$MOUNT" $@
+if [ -f "$SCRIPT" ]; then
+    osascript "$SCRIPT" $@
 else
-    echo "$MOUNT script not found"
+    echo "$SCRIPT script not found"
 fi
