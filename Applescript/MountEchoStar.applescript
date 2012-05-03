@@ -64,8 +64,6 @@ on run argv
 		end if
 	else
 		log theScript & ": The InputArg is empty"
-		if utilEchostarNetwork() of theUtils is true then
-			my MountNetwork()
-		end if
+		my MountNetwork()
 	end if
 end run

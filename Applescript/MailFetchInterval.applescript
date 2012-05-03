@@ -15,20 +15,6 @@ on setMailFetch15Min()
 	end if
 end setMailFetch15Min
 
--- Time based version
-#set timeNow to (time of (current date))
-#set timeMin to (time of (date ("7:00:00" as string)))
-#set timeMax to (time of (date ("18:00:00" as string)))
-#if appIsRunning("Mail") then
-#	tell application "Mail"
-#		if timeNow is greater than timeMin and timeNow is less than timeMax then
-#			set fetch interval to 1
-#		else
-#			set fetch interval to 15
-#		end if
-#	end tell
-#end if
-
 on run argv
 	-- Setup access to Utilities script
 	set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
@@ -44,10 +30,6 @@ on run argv
 		end if
 	else
 		log theScript & ": The InputArg is empty"
-		if utilEchostarNetwork() of theUtils is true then
-			my setMailFetch1Min()
-		else
-			my setMailFetch15Min()
-		end if
+		my setMailFetch1Min()
 	end if
 end run

@@ -11,36 +11,34 @@ property theTunnel : "SSH Tunnel Manager"
 
 -- Enable the proxy and start SSH Tunnel Manager
 on SetProxy()
-	if utilAppIsRunning(theAdium) of theUtils is true then
-		-- Start the SSH Tunnel if it is not running
-		if utilAppIsRunning(theTunnel) of theUtils is false then
-			tell application theTunnel to activate
-		end if
-		-- Enable the SOCKS proxy
-		tell application "Adium"
-			if proxy enabled of account "monty@taolam.com" is not true then
-				set proxy enabled of account "monty@taolam.com" to true
-			end if
-			tell the account "montgomery.groff@echostar.com" to go online
-		end tell
+	-- Start the SSH Tunnel if it is not running
+	if utilAppIsRunning(theTunnel) of theUtils is false then
+		tell application theTunnel to activate
 	end if
+	-- Enable the SOCKS proxy
+	tell application "Adium"
+		activate
+		if proxy enabled of account "monty@taolam.com" is not true then
+			set proxy enabled of account "monty@taolam.com" to true
+		end if
+		tell the account "montgomery.groff@echostar.com" to go online
+	end tell
 	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
 end SetProxy
 
 -- Clear the proxy and quit SSH Tunnel Manager
 on ClearProxy()
-	if utilAppIsRunning(theAdium) of theUtils is true then
-		-- Quit the SSH Tunnel if it is running
-		if utilAppIsRunning(theTunnel) of theUtils is true then
-			tell application theTunnel to quit
-		end if
-		tell application "Adium"
-			if proxy enabled of account "monty@taolam.com" is not false then
-				set proxy enabled of account "monty@taolam.com" to false
-			end if
-			tell the account "montgomery.groff@echostar.com" to go offline
-		end tell
+	-- Quit the SSH Tunnel if it is running
+	if utilAppIsRunning(theTunnel) of theUtils is true then
+		tell application theTunnel to quit
 	end if
+	tell application "Adium"
+		activate
+		if proxy enabled of account "monty@taolam.com" is not false then
+			set proxy enabled of account "monty@taolam.com" to false
+		end if
+		#		tell the account "montgomery.groff@echostar.com" to go offline
+	end tell
 	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theClearMessage) of theUtils
 end ClearProxy
 
@@ -59,10 +57,6 @@ on run argv
 		end if
 	else
 		log theScript & ": The InputArg is empty"
-		if utilEchostarNetwork() of theUtils is true then
-			my SetProxy()
-		else
-			my ClearProxy()
-		end if
+		my SetProxy()
 	end if
 end run
