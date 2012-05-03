@@ -1,67 +1,71 @@
 -- Setup Dynamic Variables
-global InputArg
-global loopVar
-global IpAddr
+global theCount
+global theUtils
+global theLoop
 
 -- Setup Static Variables
-property InputArg : ""
-property Engineering : "smb://inverness1/engineering"
-property Shared : "smb://inverness1/shared"
-property Software : "smb://inverness1/engineering/software"
-property Linux : "smb://linux-pc-251/linux"
-property Ccshare : "smb://linux-pc-251/ccshare"
-property MountList : {Software, Shared, Linux, Engineering, Ccshare}
-property DiskList : {"software", "shared", "linux", "engineering", "ccshare"}
+-- Static Variables
+property theGrowlApp : "Mount EchoStar"
+property theGrowlIcon : "AirPort Utility"
+property theSetMessage : "The EchoStar newtork is mounted."
+property theClearMessage : "The EchoStar newtork is un-mounted."
+property mountEngineering : "smb://inverness1.echostar.com/engineering"
+property mountShared : "smb://inverness1.echostar.com/shared"
+property mountEngPvcs : "smb://inv-etc1.echostar.com/eng-pvcs"
+property mountMontyLinux : "smb://linux-pc-251.echostar.com/monty-linux"
+property mountCcshare : "smb://linux-pc-251.echostar.com/ccshare"
+property mountView : "smb://linux-pc-251.echostar.com/view"
+property theMounts : {mountView, mountCcshare, mountMontyLinux, mountEngineering, mountShared, mountEngPvcs}
+property theDiscs : {"view", "ccshare", "monty-linux", "engineering", "shared", "eng-pvcs"}
 
 on MountNetwork()
-	-- Get the IP address
-	set IpAddr to do shell script "/sbin/ifconfig  | grep 'inet'| grep -v '127.0.0.1' | grep -v 'inet6' | awk '{ print $2}'" -- add this to get the first octet " | cut -d. -f1"
-	
-	-- If we are connected to an EchoStar Network, the ip address will start with 10.73 or 10.79	
-	if IpAddr contains "10.73" or IpAddr contains "10.79" then
-		log "Mounting Echostar Network"
-		-- Tell Finder what to do
-		tell application "Finder"
-			-- Loop through the mounts
-			repeat loopVar times
-				-- mount if NOT mounted
-				if not (exists disk (item loopVar of DiskList)) then
-					mount volume (item loopVar of MountList)
-				end if
-				-- Update the loop variable
-				set loopVar to (loopVar - 1)
-			end repeat
-		end tell
-	end if
+	log "Mounting Echostar Network"
+	tell application "Finder"
+		repeat theLoop times
+			if not (exists disk (item theLoop of theDiscs)) then
+				mount volume (item theLoop of theMounts)
+				set theCount to (theCount + 1)
+			end if
+			set theLoop to (theLoop - 1)
+		end repeat
+	end tell
+	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
 end MountNetwork
 
 on UnMountNetwork()
 	log "Unmounting Echostar Network"
 	tell application "Finder"
-		repeat loopVar times
-			-- Eject if already mounted
-			if (exists disk (item loopVar of DiskList)) then
-				eject (item loopVar of DiskList)
+		repeat theLoop times
+			if (exists disk (item theLoop of theDiscs)) then
+				eject (item theLoop of theDiscs)
 			end if
-			-- Update the loop variable
-			set loopVar to (loopVar - 1)
+			set theLoop to (theLoop - 1)
 		end repeat
 	end tell
+	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theClearMessage) of theUtils
 end UnMountNetwork
 
 on run argv
+	-- Setup access to Utilities script
+	set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
+	-- Save the script name
+	set theScript to utilAppName(me) of theUtils
+	-- Initialize theCount
+	set theCount to 0
 	-- Setup Loop variable
-	set loopVar to count MountList
+	set theLoop to count theMounts
 	
 	-- Get the command line argument if there is one
 	if (count argv) is greater than 0 then
 		set InputArg to item 1 of argv
-		log "The InputArg is \"" & InputArg & "\""
-		if InputArg is "unmount" then
+		log theScript & ": The InputArg is \"" & InputArg & "\""
+		if InputArg is "clear" then
 			my UnMountNetwork()
 		end if
 	else
-		log "The InputArg is empty"
-		my MountNetwork()
+		log theScript & ": The InputArg is empty"
+		if utilEchostarNetwork() of theUtils is true then
+			my MountNetwork()
+		end if
 	end if
 end run
