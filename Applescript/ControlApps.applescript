@@ -7,7 +7,7 @@ property theGrowlApp : "Control Apps"
 property theGrowlIcon : "App Store"
 property theSetMessage : "All Applications have been started."
 property theClearMessage : "Some Applications have been closed."
-property theHomeList : {"Mail", "Adium", "iTunes", "Safari", "Reeder"}
+property theHomeList : {"Mail", "Adium", "iTunes", "Safari", "Reeder", "iCal", "Evernote"}
 property theWorkList : {"iCal", "Evernote"}
 
 -- Launch a few applications, then hide them
@@ -23,28 +23,10 @@ on LoadApps()
 			set theCount to (theCount + 1)
 		end if
 	end repeat
-	if utilEchostarNetwork() of theUtils is true then
-		my LoadEchostarApps()
-	end if
 	if theCount is greater than 0 then
 		utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
 	end if
 end LoadApps
-
--- Launch a few more apps for work, then hide them
-on LoadEchostarApps()
-	repeat with theApp in theWorkList
-		if utilAppIsRunning(theApp) of theUtils is false then
-			tell application theApp to activate
-			delay 2
-			-- Hide the application
-			tell application "System Events"
-				set visible of process theApp to false
-			end tell
-			set theCount to (theCount + 1)
-		end if
-	end repeat
-end LoadEchostarApps
 
 -- Close a few applications
 on CloseApps()
