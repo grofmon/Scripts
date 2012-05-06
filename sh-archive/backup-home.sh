@@ -1,2 +1,2 @@
 #!/bin/sh
-rsync -avz "/Users/monty/" "/Volumes/2TB WD/monty/"
+rsync -amv --delete "/Users/monty/" "/Volumes/2TB WD/monty/"
