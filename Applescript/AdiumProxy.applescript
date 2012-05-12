@@ -17,10 +17,7 @@ on SetProxy()
 	end if
 	-- Enable the SOCKS proxy
 	tell application "Adium"
-		activate
-		if proxy enabled of account "monty@taolam.com" is not true then
-			set proxy enabled of account "monty@taolam.com" to true
-		end if
+		set proxy enabled of account "monty@taolam.com" to true
 		tell the account "montgomery.groff@echostar.com" to go online
 	end tell
 	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
@@ -33,11 +30,7 @@ on ClearProxy()
 		tell application theTunnel to quit
 	end if
 	tell application "Adium"
-		activate
-		if proxy enabled of account "monty@taolam.com" is not false then
-			set proxy enabled of account "monty@taolam.com" to false
-		end if
-		#		tell the account "montgomery.groff@echostar.com" to go offline
+		set proxy enabled of account "monty@taolam.com" to false
 	end tell
 	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theClearMessage) of theUtils
 end ClearProxy
@@ -45,18 +38,12 @@ end ClearProxy
 on run argv
 	-- Setup access to Utilities script
 	set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
-	-- Save the script name
-	set theScript to utilAppName(me) of theUtils
-	
-	-- Get the command line argument if there is one
-	if (count argv) is greater than 0 then
-		set InputArg to item 1 of argv
-		log theScript & ": The InputArg is \"" & InputArg & "\""
-		if InputArg is "clear" then
+	tell application "Adium"
+		activate
+		if proxy enabled of account "monty@taolam.com" is true then
 			my ClearProxy()
+		else
+			my SetProxy()
 		end if
-	else
-		log theScript & ": The InputArg is empty"
-		my SetProxy()
-	end if
+	end tell
 end run
