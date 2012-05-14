@@ -1,7 +1,7 @@
 -- Setup Dynamic Variables
-global theCount
 global theUtils
 global theLoop
+global isMounted
 
 -- Setup Static Variables
 -- Static Variables
@@ -19,12 +19,10 @@ property theMounts : {mountView, mountCcshare, mountMontyLinux, mountEngineering
 property theDiscs : {"view", "ccshare", "monty-linux", "engineering", "shared", "eng-pvcs"}
 
 on MountNetwork()
-	log "Mounting Echostar Network"
 	tell application "Finder"
 		repeat theLoop times
 			if not (exists disk (item theLoop of theDiscs)) then
 				mount volume (item theLoop of theMounts)
-				set theCount to (theCount + 1)
 			end if
 			set theLoop to (theLoop - 1)
 		end repeat
@@ -33,7 +31,6 @@ on MountNetwork()
 end MountNetwork
 
 on UnMountNetwork()
-	log "Unmounting Echostar Network"
 	tell application "Finder"
 		repeat theLoop times
 			if (exists disk (item theLoop of theDiscs)) then
@@ -48,22 +45,32 @@ end UnMountNetwork
 on run argv
 	-- Setup access to Utilities script
 	set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
-	-- Save the script name
-	set theScript to utilAppName(me) of theUtils
-	-- Initialize theCount
-	set theCount to 0
+	
 	-- Setup Loop variable
 	set theLoop to count theMounts
+	set isMounted to false
 	
 	-- Get the command line argument if there is one
 	if (count argv) is greater than 0 then
 		set InputArg to item 1 of argv
-		log theScript & ": The InputArg is \"" & InputArg & "\""
 		if InputArg is "clear" then
 			my UnMountNetwork()
+		else if InputArg is "set" then
+			my MountNetwork()
 		end if
 	else
-		log theScript & ": The InputArg is empty"
-		my MountNetwork()
+		tell application "Finder"
+			repeat theLoop times
+				if (exists disk (item theLoop of theDiscs)) then
+					set isMounted to true
+				end if
+			end repeat
+		end tell
+		
+		if isMounted is true then
+			my UnMountNetwork()
+		else
+			my MountNetwork()
+		end if
 	end if
 end run

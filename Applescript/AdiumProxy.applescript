@@ -38,12 +38,22 @@ end ClearProxy
 on run argv
 	-- Setup access to Utilities script
 	set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
-	tell application "Adium"
-		activate
-		if proxy enabled of account "monty@taolam.com" is true then
+	-- Get the command line argument if there is one
+	if (count argv) is greater than 0 then
+		set InputArg to item 1 of argv
+		if InputArg is "clear" then
 			my ClearProxy()
-		else
+		else if InputArg is "set" then
 			my SetProxy()
 		end if
-	end tell
+	else
+		tell application "Adium"
+			activate
+			if proxy enabled of account "monty@taolam.com" is true then
+				my ClearProxy()
+			else
+				my SetProxy()
+			end if
+		end tell
+	end if
 end run

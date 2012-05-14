@@ -53,16 +53,17 @@ on run argv
 	-- Get the command line argument if there is one
 	if (count argv) is greater than 0 then
 		set InputArg to item 1 of argv
-		log theScript & ": The InputArg is \"" & InputArg & "\""
+		
 		if InputArg is "clear" then
 			my ClearNetworkSettings()
+		else if InputArg is "set" then
+			my SetNetworkSettings()
 		end if
 	else
-		log theScript & ": The InputArg is empty"
-		if utilEchostarNetwork() of theUtils is true then
-			my SetNetworkSettings()
-		else
+		if utilCheckDns() of theUtils is true then
 			my ClearNetworkSettings()
+		else
+			my SetNetworkSettings()
 		end if
 	end if
 end run

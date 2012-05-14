@@ -25,6 +25,16 @@ on utilAppName(appName)
 	end tell
 end utilAppName
 
+on utilCheckDns()
+	-- Check to see if the search domains are empty. 
+	set theResult to do shell script "/usr/sbin/networksetup -getdnsservers \"Wi-Fi\""
+	if theResult contains "There aren't any DNS Servers set on Wi-Fi." then
+		return false
+	else
+		return true
+	end if
+end utilCheckDns
+
 on utilNotifyGrowl(appName, appIcon, appString)
 	if utilAppIsRunning("Growl") then
 		tell application "Growl"
