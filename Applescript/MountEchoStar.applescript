@@ -12,18 +12,20 @@ property theClearMessage : "The EchoStar newtork is un-mounted."
 property mountEngineering : "smb://inverness1.echostar.com/engineering"
 property mountShared : "smb://inverness1.echostar.com/shared"
 property mountEngPvcs : "smb://inv-etc1.echostar.com/eng-pvcs"
-property mountMontyLinux : "smb://linux-pc-251.echostar.com/monty-linux"
-property mountCcshare : "smb://linux-pc-251.echostar.com/ccshare"
-property mountView : "smb://linux-pc-251.echostar.com/view"
+property mountMontyLinux : "smb://10.79.97.251/monty-linux"
+property mountCcshare : "smb://10.79.97.251/ccshare"
+property mountView : "smb://10.79.97.251/view"
 property theMounts : {mountView, mountCcshare, mountMontyLinux, mountEngineering, mountShared, mountEngPvcs}
 property theDiscs : {"view", "ccshare", "monty-linux", "engineering", "shared", "eng-pvcs"}
 
 on MountNetwork()
 	tell application "Finder"
 		repeat theLoop times
-			if not (exists disk (item theLoop of theDiscs)) then
+			try
 				mount volume (item theLoop of theMounts)
-			end if
+			on error
+				log "Oops!"
+			end try
 			set theLoop to (theLoop - 1)
 		end repeat
 	end tell
@@ -33,9 +35,11 @@ end MountNetwork
 on UnMountNetwork()
 	tell application "Finder"
 		repeat theLoop times
-			if (exists disk (item theLoop of theDiscs)) then
+			try
 				eject (item theLoop of theDiscs)
-			end if
+			on error
+				log "Oops!"
+			end try
 			set theLoop to (theLoop - 1)
 		end repeat
 	end tell
@@ -63,6 +67,7 @@ on run argv
 			repeat theLoop times
 				if (exists disk (item theLoop of theDiscs)) then
 					set isMounted to true
+					exit repeat
 				end if
 			end repeat
 		end tell
