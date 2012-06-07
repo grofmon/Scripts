@@ -6,12 +6,12 @@ property theGrowlApp : "Control Apps"
 property theGrowlIcon : "App Store"
 property theSetMessage : "All Applications have been started."
 property theClearMessage : "Some Applications have been closed."
-property theHomeList : {"Mail", "Adium", "iTunes", "Safari", "Reeder", "iCal", "Evernote"}
-property theWorkList : {"iCal", "Evernote"}
+property theOpenList : {"Mail", "Adium", "iTunes", "Safari", "Reeder", "Twitter", "iChat", "iCal", "Evernote"}
+property theCloseList : {"iCal", "Evernote", "SSH Tunnel Manager"}
 
 -- Launch a few applications, then hide them
 on LoadApps()
-	repeat with theApp in theHomeList
+	repeat with theApp in theOpenList
 		if utilAppIsRunning(theApp) of theUtils is false then
 			tell application theApp to activate
 			delay 2
@@ -26,7 +26,7 @@ end LoadApps
 
 -- Close a few applications
 on CloseApps()
-	repeat with theApp in theWorkList
+	repeat with theApp in theCloseList
 		if utilAppIsRunning(theApp) of theUtils is true then
 			tell application theApp to quit
 		end if
