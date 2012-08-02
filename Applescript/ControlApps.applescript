@@ -6,8 +6,8 @@ property theGrowlApp : "Control Apps"
 property theGrowlIcon : "App Store"
 property theSetMessage : "All Applications have been started."
 property theClearMessage : "Some Applications have been closed."
-property theOpenList : {"Mail", "Adium", "iTunes", "Safari", "Reeder", "iCal", "Evernote"}
-property theCloseList : {"iCal", "Evernote", "SSH Tunnel Manager"}
+property theOpenList : {"Mail", "Adium", "iTunes", "Safari", "Reeder", "Calendar", "Evernote", "Messages", "Reminders"}
+property theCloseList : {"Calendar", "Evernote", "SSH Tunnel Manager", "Reminders"}
 
 -- Launch a few applications, then hide them
 on LoadApps()

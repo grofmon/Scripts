@@ -22,9 +22,7 @@ on run
 	
 	do shell script "/usr/bin/osascript " & (POSIX path of file ((path to library folder from user domain as string) & "Scripts:AdiumProxy.scpt")) & " clear"
 	
-	do shell script "/usr/bin/osascript " & (POSIX path of file ((path to library folder from user domain as string) & "Scripts:MailFetchInterval.scpt")) & " clear"
-	
-	#	do shell script "/usr/bin/osascript " & (POSIX path of file ((path to library folder from user domain as string) & "Scripts:MailAccountSet.scpt")) & " clear"
+	#do shell script "/usr/bin/osascript " & (POSIX path of file ((path to library folder from user domain as string) & "Scripts:MailFetchInterval.scpt")) & " clear"
 	
 	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
 	

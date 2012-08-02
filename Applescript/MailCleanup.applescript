@@ -6,9 +6,9 @@ tell application "Finder"
 end tell
 
 property theDate : (current date) - (15 * days)
-property theWorkMailboxes : {"BRCM Support", "Build-Cron"}
+property theWorkMailboxes : {"config_spec", "build"}
 property theWorkAccount : "Echostar"
-property theMailboxes : {"newsletters", "support-org", "political", "denver-trail-runners"}
+property theMailboxes : {"newsletters", "support org", "political", "denver trail runners"}
 property theAccount : "Gmail"
 property totalCount : 0
 
@@ -38,6 +38,5 @@ tell application "Mail"
 		utilSysLog("\"" & scriptName & ": Account " & theWorkAccount & " Moved " & theCount & " messages from the " & theWorkMailbox & " to the Trash\"") of commonScript
 	end repeat
 	utilSysLog("\"" & scriptName & ": Moved " & totalCount & " total messages to the Trash\"") of commonScript
-	#do shell script "echo  \"Moved \"" & totalCount & "\" messages to the Trash\" | mail -s " & scriptName & "\" run success\" montgomery.groff@echostar.com -c monty@Ray.local"
-	
+	do shell script "echo  \"Moved \"" & totalCount & "\" messages to the Trash\" | mail -s " & scriptName & "\" run success\" montgomery.groff@echostar.com"
 end tell
