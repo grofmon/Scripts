@@ -1,12 +1,10 @@
 on run argv
-	set theHours to "Charlie:Users:monty:Documents:Dropbox:Echostar:Managerial:hours_2012.numbers"
-	tell application "Numbers"
+	set theHours to "Charlie:Users:monty:Documents:Dropbox:Echostar:Managerial:hours_2012.xlsx"
+	tell application "Microsoft Excel"
 		activate
-		if exists document 1 then
-			set myFile to name of document 1
-			if myFile is "hours_2012" then
-				close document 1
-			end if
+		set myFile to full name of active workbook
+		if myFile is equal to theHours then
+			close workbook (the name of active workbook)
 		else
 			open theHours
 		end if
