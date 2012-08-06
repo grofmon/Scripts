@@ -14,7 +14,7 @@ on run
 		end if
 	end tell
 	
-	do shell script "/usr/bin/osascript " & (POSIX path of file ((path to library folder from user domain as string) & "Scripts:ControlApps.scpt")) & " set"
+	do shell script "/usr/bin/osascript " & (POSIX path of file ((path to library folder from user domain as string) & "GitRepository:Scripts:Applescript:ControlApps.applescript")) & " set"
 	
 	#do shell script "/usr/bin/osascript " & (POSIX path of file ((path to library folder from user domain as string) & "Scripts:NetworkSettings.scpt")) & " set"
 	
