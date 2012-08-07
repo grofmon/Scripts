@@ -38,7 +38,7 @@ end CloseFitnessApps
 
 on run argv
 	-- Setup access to Utilities script
-	set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
+	set theUtils to load script alias (POSIX file "/usr/local/bin/Utils.scpt")
 	
 	if utilAppIsRunning("Garmin Training Center") of theUtils is true or utilAppIsRunning("Garmin ANT Agent") of theUtils is true then
 		-- Close some apps

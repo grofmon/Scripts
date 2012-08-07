@@ -1,5 +1,5 @@
 --Logging
-set commonScript to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
+set theUtils to load script alias (POSIX file "/usr/local/bin/Utils.scpt")
 tell application "Finder"
 	set scriptPath to path to me
 	set scriptName to name of file scriptPath as text
@@ -22,7 +22,7 @@ tell application "Mail"
 		repeat with theMessage in theList
 			move theMessage to (mailbox "Trash" of account theAccount)
 		end repeat
-		utilSysLog("\"" & scriptName & ": Account " & theAccount & " Moved " & gmailTotal & " messages from the " & theMailbox & " to the Trash\"") of commonScript
+		utilSysLog("\"" & scriptName & ": Account " & theAccount & " Moved " & gmailTotal & " messages from the " & theMailbox & " to the Trash\"") of theUtils
 	end repeat
 	repeat with theWorkMailbox in theWorkMailboxes
 		set workTotal to 0
@@ -31,7 +31,7 @@ tell application "Mail"
 		repeat with theWorkMessage in theWorkList
 			move theWorkMessage to (mailbox "Trash" of account theWorkAccount)
 		end repeat
-		utilSysLog("\"" & scriptName & ": Account " & theWorkAccount & " Moved " & workTotal & " messages from the " & theWorkMailbox & " to the Trash\"") of commonScript
+		utilSysLog("\"" & scriptName & ": Account " & theWorkAccount & " Moved " & workTotal & " messages from the " & theWorkMailbox & " to the Trash\"") of theUtils
 	end repeat
 	do shell script "echo  \"Moved \"" & gmailTotal & "\" Gmail messages to the Trash\\nMoved \"" & workTotal & "\" Work messages to the Trash\" | mail -s " & scriptName & "\" run success\" montgomery.groff@echostar.com"
 end tell

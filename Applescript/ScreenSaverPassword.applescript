@@ -1,5 +1,5 @@
 -- Setup access to Utilities script
-set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
+set theUtils to load script alias (POSIX file "/usr/local/bin/Utils.scpt")
 
 -- Static Variables
 property theGrowlApp : "Screen Saver Password"
