@@ -40,6 +40,8 @@ on run argv
 	-- Setup access to Utilities script
 	set theUtils to load script alias (POSIX file "/usr/local/bin/Utils.scpt")
 	
+	utilNotifyGrowl(theGrowlApp, theGrowlIcon, "Starting Fitness Applications Initialization") of theUtils
+	
 	if utilAppIsRunning("Garmin Training Center") of theUtils is true or utilAppIsRunning("Garmin ANT Agent") of theUtils is true then
 		-- Close some apps
 		my CloseFitnessApps()
