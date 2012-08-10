@@ -5,7 +5,9 @@ property theSetMessage : "Work Initialization Complete."
 
 on run
 	-- Setup access to Utilities script
-	set theUtils to load script alias (POSIX file "/usr/local/bin/Utils.scpt")
+	set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
+	
+	utilNotifyGrowl(theGrowlApp, theGrowlIcon, "Starting Work Initialization") of theUtils
 	
 	tell application "System Events" to tell security preferences
 		if get require password to wake is false then
@@ -14,15 +16,15 @@ on run
 		end if
 	end tell
 	
-	run script ((POSIX file "/usr/local/bin/ControlApps.scpt")) with parameters "set"
+	run script ((path to library folder from user domain as string) & "Scripts:ControlApps.scpt") as alias with parameters "set"
 	
-	#run script ((POSIX file "/usr/local/bin/NetworkSettings.scpt.scpt")) with parameters "set"
+	#run script ((path to library folder from user domain as string) & "Scripts:NetworkSettings.scpt") as alias with parameters "set"
 	
-	#run script ((POSIX file "/usr/local/bin/MountEchostar.scpt")) with parameters "set"
+	#run script ((path to library folder from user domain as string) & "Scripts:MountEchostar.scpt") as alias with parameters "set"
 	
-	#run script ((POSIX file "/usr/local/bin/AdiumProxy.scpt.scpt")) with parameters "set"	
+	#run script ((path to library folder from user domain as string) & "Scripts:AdiumProxy.scpt") as alias with parameters "set"	
 	
-	#run script ((POSIX file "/usr/local/bin/MailFetchInterval.scpt")) with parameters "set"
+	#run script ((path to library folder from user domain as string) & "Scripts:MailFetchInterval.scpt") as alias with parameters "set"
 	
 	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
 	

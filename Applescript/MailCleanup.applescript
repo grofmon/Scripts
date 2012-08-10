@@ -1,5 +1,6 @@
 --Logging
-set theUtils to load script alias (POSIX file "/usr/local/bin/Utils.scpt")
+set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
+
 tell application "Finder"
 	set scriptPath to path to me
 	set scriptName to name of file scriptPath as text
