@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>constantArguments</key>
+	<dict>
+		<key>noCalendarNames</key>
+		<true/>
+		<key>noPropertyNames</key>
+		<true/>
+		<key>formatOutput</key>
+		<true/>
+		<key>includeOnlyEventsFromNowOn</key>
+		<true/>
+		<key>sortTasksByDateAscending</key>
+		<true/>
+		<key>alertBullet</key>
+		<string>•  </string>
+		<key>excludeEventProps</key>
+		<string>url,notes</string>
+		<key>excludeTaskProps</key>
+		<string>url,notes</string>
+		<key>notesNewlineReplacement</key>
+		<string>; </string>
+		<key>propertyOrder</key>
+		<string>title,datetime,location,priority,notes</string>
+		<key>propertySeparators</key>
+		<string>|\n|\n|\n|</string>
+	</dict>
+	<key>formatting</key>
+	<dict>
+		<key>titleValue</key>
+		<string>white</string>
+		<key>priorityValue</key>
+		<string>magenta</string>
+		<key>bullet</key>
+		<string>green</string>
+		<key>alertBullet</key>
+		<string>red</string>
+		<key>locationValue</key>
+		<string>cyan</string>
+	</dict>
+</dict>
+</plist>
