@@ -7,8 +7,8 @@ tell application "Finder"
 end tell
 
 property theDate : (current date) - (15 * days)
-property theWorkMailboxes : {"config_spec", "build"}
-property theWorkAccount : "Echostar"
+property theWorkMailboxes : {"@Reference"}
+property theWorkAccount : "Exchange"
 property theMailboxes : {"newsletters", "support org", "political", "denver trail runners"}
 property theAccount : "Gmail"
 property gmailTotal : 0
