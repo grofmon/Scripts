@@ -6,8 +6,8 @@ tell application "Finder"
 	set scriptName to name of file scriptPath as text
 end tell
 
-property theDate : (current date) - (15 * days)
-property theWorkMailboxes : {"@Reference"}
+property theDate : (current date) - (16 * days)
+property theWorkMailboxes : {"Reference"}
 property theWorkAccount : "Exchange"
 property theMailboxes : {"newsletters", "support org", "political", "denver trail runners"}
 property theAccount : "Gmail"
