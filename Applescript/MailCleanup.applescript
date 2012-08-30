@@ -6,7 +6,7 @@ tell application "Finder"
 	set scriptName to name of file scriptPath as text
 end tell
 
-property theDate : (current date) - (16 * days)
+property theDate : (current date) - (15 * days)
 property theWorkMailboxes : {"Reference"}
 property theWorkAccount : "Exchange"
 property theMailboxes : {"newsletters", "support org", "political", "denver trail runners"}
@@ -34,5 +34,5 @@ tell application "Mail"
 		end repeat
 		utilSysLog("\"" & scriptName & ": Account " & theWorkAccount & " Moved " & workTotal & " messages from the " & theWorkMailbox & " to the Trash\"") of theUtils
 	end repeat
-	do shell script "echo  \"Moved \"" & gmailTotal & "\" Gmail messages to the Trash\\nMoved \"" & workTotal & "\" Work messages to the Trash\" | mail -s " & scriptName & "\" run success\" montgomery.groff@echostar.com"
+	do shell script "echo  \"Date to delete by: \"" & theDate & "\" \\nMoved \"" & gmailTotal & "\" Gmail messages to the Trash\\nMoved \"" & workTotal & "\" Work messages to the Trash\" | mail -s " & scriptName & "\" run success\" montgomery.groff@echostar.com"
 end tell
