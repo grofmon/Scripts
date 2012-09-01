@@ -17,7 +17,7 @@ property workTotal : 0
 tell application "Mail" to activate
 tell application "Mail"
 	repeat with theMailbox in theMailboxes
-		set gmailTotal to 0
+		#set gmailTotal to 0
 		set theList to (every message of (mailbox theMailbox of account theAccount) whose date sent is less than theDate)
 		set gmailTotal to count of theList
 		repeat with theMessage in theList
@@ -26,9 +26,9 @@ tell application "Mail"
 		utilSysLog("\"" & scriptName & ": Account " & theAccount & " Moved " & gmailTotal & " messages from the " & theMailbox & " to the Trash\"") of theUtils
 	end repeat
 	repeat with theWorkMailbox in theWorkMailboxes
-		set workTotal to 0
+		#set workTotal to 0
 		set theWorkList to (every message of (mailbox theWorkMailbox of account theWorkAccount) whose date sent is less than theDate)
-		set workTotal to count of theList
+		set workTotal to count of theWorkList
 		repeat with theWorkMessage in theWorkList
 			move theWorkMessage to (mailbox "Trash" of account theWorkAccount)
 		end repeat
