@@ -18,7 +18,7 @@ on LoadFitnessApps()
 	
 	tell application "Microsoft Excel"
 		activate
-		open "Users:monty:Documents:Dropbox:Personal:Fitness:Fitness Log 2012.xlsx"
+		open "Users:monty:Dropbox:Personal:Fitness:Fitness Log 2012.xlsx"
 	end tell
 	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
 end LoadFitnessApps
