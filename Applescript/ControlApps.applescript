@@ -6,7 +6,7 @@ property theGrowlApp : "Control Apps"
 property theGrowlIcon : "App Store"
 property theSetMessage : "All Applications have been started."
 property theClearMessage : "Some Applications have been closed."
-property theOpenList : {"Mail", "iTunes", "Safari", "Reeder", "Calendar", "Evernote", "Messages", "Reminders"}
+property theOpenList : {"Mail", "iTunes", "Safari", "Reeder", "Calendar", "Evernote", "Messages", "Reminders", "Adium"}
 property theCloseList : {"Calendar", "Evernote", "Reminders"}
 
 -- Launch a few applications, then hide them
