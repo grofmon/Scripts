@@ -20,7 +20,7 @@ on LoadFitnessApps()
 		activate
 		open "Users:monty:Dropbox:Personal:Fitness:Fitness Log 2012.xlsx"
 	end tell
-	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
+	#	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
 end LoadFitnessApps
 
 -- Close a few applications
@@ -33,14 +33,14 @@ on CloseFitnessApps()
 	tell application "Microsoft Excel"
 		close workbook "Fitness Log 2012.xlsx" saving ask
 	end tell
-	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theClearMessage) of theUtils
+	#	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theClearMessage) of theUtils
 end CloseFitnessApps
 
 on run argv
 	-- Setup access to Utilities script
 	set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
 	
-	utilNotifyGrowl(theGrowlApp, theGrowlIcon, "Starting Fitness Applications Initialization") of theUtils
+	#	utilNotifyGrowl(theGrowlApp, theGrowlIcon, "Starting Fitness Applications Initialization") of theUtils
 	
 	if utilAppIsRunning("Garmin Training Center") of theUtils is true or utilAppIsRunning("Garmin ANT Agent") of theUtils is true then
 		-- Close some apps

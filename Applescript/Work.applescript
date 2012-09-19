@@ -7,7 +7,7 @@ on run
 	-- Setup access to Utilities script
 	set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
 	
-	utilNotifyGrowl(theGrowlApp, theGrowlIcon, "Starting Work Initialization") of theUtils
+	#	utilNotifyGrowl(theGrowlApp, theGrowlIcon, "Starting Work Initialization") of theUtils
 	
 	tell application "System Events" to tell security preferences
 		if get require password to wake is false then
@@ -26,6 +26,6 @@ on run
 	
 	#run script ((path to library folder from user domain as string) & "Scripts:MailFetchInterval.scpt") as alias with parameters "set"
 	
-	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
+	#	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
 	
 end run

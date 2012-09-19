@@ -23,6 +23,6 @@ on run
 	
 	#run script ((path to library folder from user domain as string) & "Scripts:MailFetchInterval.scpt") as alias with parameters "clear"
 	
-	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
+	#	utilNotifyGrowl(theGrowlApp, theGrowlIcon, theSetMessage) of theUtils
 	
 end run
