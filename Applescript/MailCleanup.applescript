@@ -1,8 +1,3 @@
-(*
---Logging
-set theUtils to load script alias ((path to library folder from user domain as string) & "Scripts:Utils.scpt")
-*)
-
 tell application "Finder"
 	set scriptPath to path to me
 	set scriptName to name of file scriptPath as text
@@ -21,7 +16,7 @@ set DeleteDate to (current date) - (40 * days)
 set PrintMoveDate to (short date string of MoveDate)
 set PrintDeleteDate to (short date string of DeleteDate)
 set HomeTotal to 0
-set AorkTotal to 0
+set WorkTotal to 0
 set HomeDeleteTotal to 0
 set WorkDeleteTotal to 0
 tell application "Mail"
@@ -40,7 +35,7 @@ tell application "Mail"
 	repeat with theWorkMailbox in WorkMbox
 		set theWorkList to (every message of (mailbox theWorkMailbox of account WorkAcct) whose date sent is less than MoveDate)
 		# Increment the count of old messages found
-		set AorkTotal to count of theWorkList
+		set WorkTotal to count of theWorkList
 		# Move old messages to the Trash
 		repeat with theWorkMessage in theWorkList
 			#log "move work message"
@@ -66,11 +61,11 @@ tell application "Mail"
 		delete theWorkDeleteMessage
 	end repeat
 	log "HomeTotal = " & HomeTotal
-	log "WorkTotal = " & AorkTotal
+	log "WorkTotal = " & WorkTotal
 	log "HomeDeleteTotal = " & HomeDeleteTotal
 	log "WorkDeleteTotal = " & WorkDeleteTotal
 	try
-		do shell script "echo \"Move emails older than \"" & PrintMoveDate & "\" to the Trash\\n - Found \"" & HomeTotal & "\" Gmail emails\\n - Found \"" & AorkTotal & "\" Exchange emails\\n
+		do shell script "echo \"Move emails older than \"" & PrintMoveDate & "\" to the Trash\\n - Found \"" & HomeTotal & "\" Gmail emails\\n - Found \"" & WorkTotal & "\" Exchange emails\\n
 Delete emails older than \"" & PrintDeleteDate & "\" from the Trash\\n - Deleted \"" & HomeDeleteTotal & "\" Gmail emails\\n - Deleted \"" & WorkDeleteTotal & "\" Exchange emails\" | mail -s " & scriptName & "\" run success\" montgomery.groff@echostar.com"
 	on error
 		log "nothing to look at here, move along"
