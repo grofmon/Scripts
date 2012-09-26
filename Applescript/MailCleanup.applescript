@@ -3,12 +3,10 @@ tell application "Finder"
 	set scriptName to name of file scriptPath as text
 end tell
 
-property WorkMbox : {"Reference"}
+property WorkMbox : {"Archive"}
 property WorkAcct : "Exchange"
-property WorkTrash : "Deleted Items"
 property HomeMbox : {"newsletters", "support org", "political", "denver trail runners"}
 property HomeAcct : "Gmail"
-property HomeTrash : "Trash"
 
 tell application "Mail" to activate
 set MoveDate to (current date) - (7 * days)
@@ -17,8 +15,7 @@ set PrintMoveDate to (short date string of MoveDate)
 set PrintDeleteDate to (short date string of DeleteDate)
 set HomeTotal to 0
 set WorkTotal to 0
-set HomeDeleteTotal to 0
-set WorkDeleteTotal to 0
+set DeleteTotal to 0
 tell application "Mail"
 	# Loop through mailboxes looking for old messages
 	repeat with theMailbox in HomeMbox
@@ -35,7 +32,7 @@ tell application "Mail"
 	repeat with theWorkMailbox in WorkMbox
 		set theWorkList to (every message of (mailbox theWorkMailbox of account WorkAcct) whose date sent is less than MoveDate)
 		# Increment the count of old messages found
-		set WorkTotal to count of theWorkList
+		set WorkTotal to (count of theWorkList) + WorkTotal
 		# Move old messages to the Trash
 		repeat with theWorkMessage in theWorkList
 			#log "move work message"
@@ -43,31 +40,21 @@ tell application "Mail"
 		end repeat
 	end repeat
 	
-	# Find old messages in HomeTrash	
-	set the theHomeDeleteList to (every message of (mailbox HomeTrash of account HomeAcct) whose date sent is less than DeleteDate)
+	# Find old messages in the Trash mailbox	
+	set the theDeleteList to (every message of trash mailbox whose date sent is less than DeleteDate)
 	# Increment the count of old messages found
-	set HomeDeleteTotal to count of theHomeDeleteList
-	repeat with theHomeDeleteMessage in theHomeDeleteList
+	set DeleteTotal to count of theDeleteList
+	repeat with theDeleteMessage in theDeleteList
 		#log "delete home email"
-		delete theHomeDeleteMessage
-	end repeat
-	
-	# Find old messages in WorkTrash	
-	set the theWorkDeleteList to (every message of (mailbox WorkTrash of account WorkAcct) whose date sent is less than DeleteDate)
-	# Increment the count of old messages found
-	set WorkDeleteTotal to count of theWorkDeleteList
-	repeat with theWorkDeleteMessage in theWorkDeleteList
-		#log "delete work email"
-		delete theWorkDeleteMessage
+		delete theDeleteMessage
 	end repeat
 	log "HomeTotal = " & HomeTotal
 	log "WorkTotal = " & WorkTotal
-	log "HomeDeleteTotal = " & HomeDeleteTotal
-	log "WorkDeleteTotal = " & WorkDeleteTotal
-	try
-		do shell script "echo \"Move emails older than \"" & PrintMoveDate & "\" to the Trash\\n - Found \"" & HomeTotal & "\" Gmail emails\\n - Found \"" & WorkTotal & "\" Exchange emails\\n
-Delete emails older than \"" & PrintDeleteDate & "\" from the Trash\\n - Deleted \"" & HomeDeleteTotal & "\" Gmail emails\\n - Deleted \"" & WorkDeleteTotal & "\" Exchange emails\" | mail -s " & scriptName & "\" run success\" montgomery.groff@echostar.com"
-	on error
-		log "nothing to look at here, move along"
-	end try
+	log "DeleteTotal = " & DeleteTotal
+	#	try
+	do shell script "echo \"Move emails older than \"" & PrintMoveDate & "\" to the Trash\\n - Found \"" & HomeTotal & "\" Gmail emails\\n - Found \"" & WorkTotal & "\" Exchange emails\\n
+Delete emails older than \"" & PrintDeleteDate & "\" from the Trash\\n - Deleted \"" & DeleteTotal & "\" emails\" | mail -s " & scriptName & "\" run success\" montgomery.groff@echostar.com"
+	#	on error
+	#		log "nothing to look at here, move along"
+	#	end try
 end tell
