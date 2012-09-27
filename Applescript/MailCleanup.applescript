@@ -1,42 +1,32 @@
+(*
 tell application "Finder"
 	set scriptPath to path to me
 	set scriptName to name of file scriptPath as text
 end tell
+*)
 
-property WorkMbox : {"Archive"}
-property WorkAcct : "Exchange"
-property HomeMbox : {"newsletters", "support org", "political", "denver trail runners"}
-property HomeAcct : "Gmail"
+property theAcctList : {"Echostar", "Gmail"}
+property theMboxList : {"Archive", "newsletters", "support org", "political", "denver trail runners"}
 
 tell application "Mail" to activate
 set MoveDate to (current date) - (7 * days)
 set DeleteDate to (current date) - (40 * days)
-set PrintMoveDate to (short date string of MoveDate)
-set PrintDeleteDate to (short date string of DeleteDate)
-set HomeTotal to 0
-set WorkTotal to 0
+set MoveTotal to 0
 set DeleteTotal to 0
 tell application "Mail"
-	# Loop through mailboxes looking for old messages
-	repeat with theMailbox in HomeMbox
-		set theList to (every message of (mailbox theMailbox of account HomeAcct) whose date sent is less than MoveDate)
-		# Increment the count of old messages found
-		set HomeTotal to (count of theList) + HomeTotal
-		# Move old messages to the Trash
-		repeat with theMessage in theList
-			#log "move home message"
-			move theMessage to (mailbox HomeTrash of account HomeAcct)
-		end repeat
-	end repeat
-	# Loop through mailboxes looking for old messages
-	repeat with theWorkMailbox in WorkMbox
-		set theWorkList to (every message of (mailbox theWorkMailbox of account WorkAcct) whose date sent is less than MoveDate)
-		# Increment the count of old messages found
-		set WorkTotal to (count of theWorkList) + WorkTotal
-		# Move old messages to the Trash
-		repeat with theWorkMessage in theWorkList
-			#log "move work message"
-			move theWorkMessage to (mailbox WorkTrash of account WorkAcct)
+	repeat with theAcct in theAcctList
+		# Loop through mailboxes looking for old messages
+		repeat with theMailbox in theMboxList
+			if (mailbox theMailbox of account theAcct) exists then
+				set theList to (every message of (mailbox theMailbox of account theAcct) whose date sent is less than MoveDate)
+				# Increment the count of old messages found
+				set MoveTotal to (count of theList) + MoveTotal
+				# Move old messages to the Trash
+				repeat with theMessage in theList
+					#log "move " & theMailbox & " message"
+					move theMessage to trash mailbox
+				end repeat
+			end if
 		end repeat
 	end repeat
 	
@@ -45,16 +35,28 @@ tell application "Mail"
 	# Increment the count of old messages found
 	set DeleteTotal to count of theDeleteList
 	repeat with theDeleteMessage in theDeleteList
-		#log "delete home email"
-		delete theDeleteMessage
+		#log "delete email"
+		set deleted status of theDeleteMessage to true
 	end repeat
-	log "HomeTotal = " & HomeTotal
-	log "WorkTotal = " & WorkTotal
+	
+	log "MoveTotal = " & MoveTotal
 	log "DeleteTotal = " & DeleteTotal
-	#	try
-	do shell script "echo \"Move emails older than \"" & PrintMoveDate & "\" to the Trash\\n - Found \"" & HomeTotal & "\" Gmail emails\\n - Found \"" & WorkTotal & "\" Exchange emails\\n
-Delete emails older than \"" & PrintDeleteDate & "\" from the Trash\\n - Deleted \"" & DeleteTotal & "\" emails\" | mail -s " & scriptName & "\" run success\" montgomery.groff@echostar.com"
-	#	on error
-	#		log "nothing to look at here, move along"
-	#	end try
+	
+	set sendMessage to "Move emails older than " & (short date string of MoveDate) & " to the Trash
+ - Moved " & MoveTotal & " emails
+Delete emails older than " & (short date string of DeleteDate) & "
+ - Deleted " & DeleteTotal & " emails"
+	
+	# Send an imessage
+	tell application "Messages"
+		# Test code to get service names and buddies list
+		#get services
+		#get name of services
+		#get buddies
+		#get name of buddies
+		send sendMessage to buddy "monty@taolam.com" of service "E:grofmon@gmail.com"
+	end tell
+	
+	# Send and email
+	#do shell script "echo  \"" & sendMessage & "\" | mail -s " & scriptName & "\" run success\" montgomery.groff@echostar.com"
 end tell
