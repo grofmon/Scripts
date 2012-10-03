@@ -47,6 +47,7 @@ tell application "Mail"
 Delete emails older than " & (short date string of DeleteDate) & "
  - Deleted " & DeleteTotal & " emails"
 	
+	(*	
 	# Send an imessage
 	tell application "Messages"
 		# Test code to get service names and buddies list
@@ -56,7 +57,7 @@ Delete emails older than " & (short date string of DeleteDate) & "
 		#get name of buddies
 		send sendMessage to buddy "monty@taolam.com" of service "E:grofmon@gmail.com"
 	end tell
-	
+*)
 	# Send and email
-	#do shell script "echo  \"" & sendMessage & "\" | mail -s " & scriptName & "\" run success\" montgomery.groff@echostar.com"
+	do shell script "echo  \"" & sendMessage & "\" | mail -s \"MailCleanup run success\" montgomery.groff@echostar.com"
 end tell
