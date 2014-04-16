@@ -1,0 +1,287 @@
+ULTIMATE WEATHER PARSER - README
+VERSION: BETA 04
+ROBERT WOLTERMAN (xtacocorex), 2012
+
+CONTENTS:
+=====================
+1 - About
+2 - Installation
+3 - Usage
+4 - Weather Images
+5 - Samples
+
+1. ABOUT
+=====================
+
+This script suite allows for the parsing of weather data from the following websites:
+Yahoo! Weather
+Weather Underground
+US National Weather Service
+ACCU Weather
+  - No weather images
+BBC Weather
+  - Only works with url specified on command line, no weather images
+
+Each site has certain options for what is supported, refer to the Usage section for those options.
+
+The script supports automatic location grabbing, if specified.  When the script is run, it will attempt
+to locate your zip code and map it to the Yahoo WOEID and a LOCID.  If this is not found, it will download 
+and store the information.  This allows the script to customize the weather information for your current 
+location.  
+
+If the automatic location grabbing is not your thing, you can specify your location with command line options.
+Refer to the Usage for the settings.
+
+2. INSTALLATION
+=====================
+
+Copy the ultimateweather folder to the directory of your choosing.  
+The examples below assume you've copied the directory to ~/Documents/Geektool.
+
+If you do not know what ~ means in Unix based OS's, it is the shortcut to your home directory: /Users/<username>
+where <username> is your username.
+
+On my system, ~ is /Users/pacothetaco
+
+3. USAGE
+=====================
+
+Below are the command line options for the Ultimate Weather Parser.  I need to map out what options are 
+required when certain options are specified.  For instance, if you are specifying a location, you do not always
+need to include the postal code.  If you run into trouble, run the script with your chosen options in Terminal.app
+and add the -d flag.  Send me the debug output that gets printed to the screen and I'll let you know what is wrong.
+
+Usage: ultimate_weather_parser.py [options]
+Options:
+  -h, --help            show this help message and exit
+  -d, --debug           Enable debugging
+  -M, --metric          Use Metric Units (not supported for all sites,
+                        currently only works for Yahoo! Weather)
+  -H, --hideprovides    Hide the Provided by line in the output
+  -W, --wxwarnings      Display any hazardous weather warnings, if applicable
+                        - only for US NWS current weather
+  -U URL, --url=URL     User input URL if you are bypassing the automatic
+                        location grabbing feature
+  -T WEATHERTYPE, --weathertype=WEATHERTYPE
+                        Specify the place you want your weather from: yahoo,
+                        weatherchannel, wunderground, weatherbug, usnws,
+                        accuweather, bbc
+  -o ORIENTATION, --orientation=ORIENTATION
+                        Specify the orientation of weather data for Weather
+                        Underground-> multiday or US NWS-> multidaysimple:
+                        horizontal/vertical
+  -s CURRENTOUTPUTTYPE, --currentoutputtype=CURRENTOUTPUTTYPE
+                        Specify how the Current weather data for the weather
+                        sites is displayed: detailed/simple
+  -D, --degreesymbol    Show the degree symbol, requires Geeklet to be set to
+                        Unicode
+
+  Location Options:
+    Options Specific to Location Services
+
+    -L LOCSERV, --locserv=LOCSERV
+                        Specify the IP to Location grabbing service to use:
+                        ipinfodb
+    -Q YQL_LOC_TYPE, --yql_loc_type=YQL_LOC_TYPE
+                        Specify how the YQL gets the WOEID: zip/full
+    -A, --locgrabber    Tell the script to use the Location grabbing function
+    -B, --locfeeder     Tell the script to use the Location you provide with
+                        the -C, -S, -O, and -Z options
+    -C CITY, --city=CITY
+                        City of user input location
+    -S STATEPROV, --stateprov=STATEPROV
+                        State or Province of user input location
+    -O COUNTRY, --country=COUNTRY
+                        Country of user input location
+    -Z ZIPCODE, --zipcode=ZIPCODE
+                        Zip code of user input location
+
+  Yahoo! Weather Options:
+    Options Specific to Yahoo! Weather, use only if -T is set to: yahoo
+
+    -e YAHOOFCASTTYPE, --yahoofcasttype=YAHOOFCASTTYPE
+                        Specify the type of forecast to display:
+                        current,twoday,fivedaysimple,fivedaydetail
+
+  Weather Underground Options:
+    Options Specific to Weather Underground, use only if -T is set to:
+    wunderground
+
+    -g WUNDERGROUNDFCASTTYPE, --wundergroundfcasttype=WUNDERGROUNDFCASTTYPE
+                        Specify the type of forecast to display:
+                        current,multiday
+    -n WUNDERGROUNDNUMDAYS, --wundergroundnumdays=WUNDERGROUNDNUMDAYS
+                        Specify the number of days to grab for the
+                        wunderground multi-day forecast (1 to 10)
+
+  US National Weather Service Options:
+    Options Specific to US National Weather Service, use only if -T is set
+    to: uwnws
+
+    -i USNWSFCASTTYPE, --usnwsfcasttype=USNWSFCASTTYPE
+                        Specify the type of forecast to display:
+                        current,multidaysimple,multidaydetailed
+
+  ACCUWeather Options:
+    Options Specific to ACCUWeather, use only if -T is set to: accuweather
+
+    -j ACCUWXFCASTTYPE, --accuwxfcasttype=ACCUWXFCASTTYPE
+                        Specify the type of forecast to display:
+                        current,multiday
+    -m ACCUWEATHERNUMDAYS, --accuweathernumdays=ACCUWEATHERNUMDAYS
+                        Specify the number of days to grab for the accuweather
+                        multi-day forecast (1 to 5)
+
+  BBC Weather Options:
+    Options Specific to BBC Weather, use only if -T is set to: bbc
+
+    -k BBCFCASTTYPE, --bbcfcasttype=BBCFCASTTYPE
+                        Specify the type of forecast to display:
+                        current,multiday
+    -q BBCWEATHERNUMDAYS, --bbcweathernumdays=BBCWEATHERNUMDAYS
+                        Specify the number of days to grab for the bbc multi-
+                        day forecast (1 to 5)
+
+
+4. WEATHER IMAGES
+=====================
+
+The script will automatically download the weather condition images for the following sites and settings:
+Yahoo! Weather: Current Condition (.gif)
+                2 Day Forecast (.gif)
+
+Weather Underground: Current Condition (.gif)
+                     Multi Day (all 10 from the site will be downloaded) (.gif)
+
+US National Weather Service: Multi Day Simple (.jpg)
+
+Images are downloaded to /tmp.
+
+To display the images in Geektool:
+file://localhost/tmp/<sitename>_current_wx.ext
+file://localhost/tmp/<sitename>_fcast_dayX.ext
+
+
+To display the images in Nerdtool:
+file:///tmp/<sitename_current_wx.ext
+file:///tmp/<sitename_fcast_dayX.ext
+
+<sitename> is the website that you are parsing, (yahoo,wunderground,usnws)
+X (capital) is the day number that for the forecast (1,2,3,etc)
+ext is the file extension in parenthesis for the site of your choosing (listed above):
+
+5. SAMPLES
+=====================
+
+The following samples are based upon installing the script in the Installation section.
+They provide an overview of what can be done with the script, hopefully there is enough here to help
+you create the output that you want to see.
+
+Yahoo! Weather
+------------------------------
+
+Automatic Location: Current Weather Simple Display
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T yahoo -e current -s simple
+
+Automatic Location: Current Weather Detailed Display
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T yahoo -e current -s detailed
+
+Automatic Location: Two Day Forecast (Vertical Only)
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T yahoo -e twoday
+
+User Specified Location: Five Day Simple Forecast (Vertical Only)
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -B -C "cedar rapids" -S iowa -O "united states" -Z 52401 -Q full -T yahoo -e fivedaysimple
+
+User Specified Location: Five Day Detail Forecast (Vertical Only)
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -B -C "cedar rapids" -S iowa -O "united states" -Z 52401 -Q full -T yahoo -e fivedaydetail
+
+User Specified URL: Current Weather - Simple Display  - *** URL NEEDS TO BE INSIDE QUOTES ***
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -T yahoo -e current --url="http://weather.yahooapis.com/forecastrss?w=12787706&u=f"
+
+User Specified URL: Two Day Forecast in Metric - *** URL NEEDS TO BE INSIDE QUOTES ***
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -T yahoo -e twoday -M --url="http://weather.yahooapis.com/forecastrss?w=12787706&u=f"
+
+User Specified URL: Five Day Simple Forecast in Metric (Foreign) - *** URL NEEDS TO BE INSIDE QUOTES ***
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -T yahoo -e fivedaysimple -M --url="http://weather.yahoo.com/england/greater-london/london-44418/?unit=c"
+
+User Specified URL: Five Day Detailed Forecast (Foreign) - *** URL NEEDS TO BE INSIDE QUOTES ***
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -T yahoo -e fivedaydetail --url="http://weather.yahoo.com/japan/tokyo-prefecture/tokyo-1118370/"
+
+
+Weather Underground
+------------------------------
+
+Automatic Location: Current Weather Simple Display
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T wunderground -g current -s simple
+
+Automatic Location: Current Weather Detailed Display
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T wunderground -g current -s detailed
+
+Automatic Location: Multiday Forecast - Display 2 Days Vertically
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T wunderground -g multiday -n 2
+
+Automatic Location: Multiday Forecast - Display 5 Days Horizontally
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T wunderground -g multiday -n 5 -o horizontal
+
+User Specified Location: Current Weather Simple Display (United States)
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -B -C "cedar rapids" -S iowa -O "united states" -Z 52401 -Q full -T wunderground -g current -s simple
+
+User Specified Location: Current Weather Simple Display (Foreign) (instance where the postal code is not necessary)
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -B -C "absberg" -S bavaria -O "germany" -Q full -T wunderground -g current -s simple
+
+User Specified URL: Multiday Forecast - Display 3 Days Vertically - *** URL NEEDS TO BE INSIDE QUOTES ***
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -T wunderground -g multiday -n 3 --url="http://www.wunderground.com/cgi-bin/findweather/getForecast?query=Nome+alaska"
+
+
+US National Weather Service
+------------------------------
+
+Automatic Location: Current Weather Simple Display
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T usnws -i current -s simple
+
+Automatic Location: Current Weather Detailed Display
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T usnws -i current -s detailed
+
+Automatic Location: Multiday Forecast - Simple Display Vertically
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T usnws -i multidaysimple
+
+Automatic Location: Multiday Forecast - Detailed Display (Vertical Only)
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T usnws -i multidaydetailed
+
+User Specified Location: Current Weather Simple Display (United States)
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -B -C "cedar rapids" -S iowa -O "united states" -Z 52401 -Q full -T usnws -i current -s simple
+
+User Specified URL: Multiday Forecast - Simple Display Horizontally - *** URL NEEDS TO BE INSIDE QUOTES AND NEEDS TO BE COPIED EXACTLY FROM THE URL BAR IN YOUR BROWSER ***
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -T usnws -i multidaysimple -o horizontal --url="http://forecast.weather.gov/MapClick.php?CityName=Seattle&state=WA&site=SEW&textField1=47.6218&textField2=-122.35&e=1"
+
+
+ACCU Weather Service
+------------------------------
+
+Automatic Location: Current Weather Simple Display
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T accuweather -j current -s simple
+
+Automatic Location: Current Weather Detailed Display
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T accuweather -j current -s detailed
+
+Automatic Location: Multiday Forecast - Display Vertically
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -A -L ipinfodb -Q full -T accuweather -j multiday
+
+User Specified Location: Current Weather Simple Display (United States)
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -B -C "cedar rapids" -S iowa -O "united states" -Z 52401 -Q full -T accuweather -j current -s simple
+
+User Specified URL: Current Forecast - Detailed - *** URL NEEDS TO BE INSIDE QUOTES AND NEEDS TO BE COPIED EXACTLY FROM THE URL BAR IN YOUR BROWSER ***
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -T accuweather -j current -s detailed --url="http://www.accuweather.com/en/us/enid-ok/73701/current-weather/330124"
+
+User Specified URL: Multiday Forecast - Horizontally - *** URL NEEDS TO BE INSIDE QUOTES AND NEEDS TO BE COPIED EXACTLY FROM THE URL BAR IN YOUR BROWSER ***
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -T accuweather -j multiday -o horizontal --url="http://www.accuweather.com/en/us/enid-ok/73701/daily-weather-forecast/330124"
+
+
+BBC Weather Service
+------------------------------
+
+User Specified URL: Current Forecast - Detailed - *** URL NEEDS TO BE INSIDE QUOTES AND NEEDS TO BE COPIED EXACTLY FROM THE URL BAR IN YOUR BROWSER ***
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -T bbc -k current -s detailed --url="http://www.bbc.co.uk/weather/2643743"
+
+User Specified URL: Multiday Forecast - Horizontally - *** URL NEEDS TO BE INSIDE QUOTES AND NEEDS TO BE COPIED EXACTLY FROM THE URL BAR IN YOUR BROWSER ***
+python ~/Documents/Geektool/ultimateweather/ultimate_weather_parser.py -T bbc -k multiday -o horizontal --url="http://www.bbc.co.uk/weather/2653266"

@@ -1,0 +1,2 @@
+#!/bin/sh
+curl --silent "http://weather.yahoo.com/united-states/colorado/denver-12792950/" | grep "current-weather" | sed "s/.*background\:url(\'\(.*\)\') .*/\1/" | xargs curl --silent -o /tmp/geektool/weather.png
