@@ -1,7 +1,7 @@
 #!/bin/sh
 INPUT=$1
-XLD="/Users/monty/Dropbox/Scripts/xld"
-AP="/Users/monty/Dropbox/Scripts/ap"
+XLD="/Users/monty/Dropbox/Scripts/bin/xld"
+AP="/Users/monty/Dropbox/Scripts/bin/ap"
 OUTDIR="/Users/monty/Downloads/"
 
 if [ ! -z "$2" ]; then
