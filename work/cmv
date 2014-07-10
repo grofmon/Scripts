@@ -1,2 +1,0 @@
-#!/bin/sh
-cleartool mkview -tag $1 ~/views/$1.vws
