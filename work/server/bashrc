@@ -5,14 +5,14 @@ export PATH=/ccshare/linux/c_files/monty/bin:$PATH
 
 # Source global aliases
 if [ -f /ccshare/linux/c_files/monty/bin/alias ]; then
-   . /ccshare/linux/c_files/monty/bin/alias
+    . /ccshare/linux/c_files/monty/bin/alias
 fi
 
 # remove duplicates from history and ignore lines beginning with space
 export HISTCONTROL=ignoreboth:erasedups
 
 ## Clearcase setup
-export PATH=$PATH:/ccshare/linux/cc_tools/perl_scripts:/ccshare/linux/c_scripts:/ccshare/linux/cc_tools:/ccshare/linux/cc_tools/build_scripts:/ccshare/linux/cc_tools/perl_scripts
+export PATH=$PATH:/ccshare/linux/c_files/monty/bin:/ccshare/linux/cc_tools/perl_scripts:/ccshare/linux/c_scripts:/ccshare/linux/cc_tools:/ccshare/linux/cc_tools/build_scripts:/ccshare/linux/cc_tools/perl_scripts
 umask 0002
 
 # Setup default editor

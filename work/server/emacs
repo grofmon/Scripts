@@ -9,7 +9,7 @@
 
 ;; --- Load Libraries ---
 (load-library "shell-command.el")
-;#(load-library "saveplace.el")
+(load-library "saveplace.el")
 (load-library "clearcase.el")
 (load-library "echostar.el")
 ;(load-library "svn.el")
@@ -54,6 +54,7 @@
 ;#(semantic-load-enable-excessive-code-helpers)
 
 ;; --- Requirements ---
+(require 'xcscope ) ; cscope tags
 (require 'shell-command) ; shell command completion
 (require 'saveplace)     ; save place in files
 (require 'whitespace)    ; show whitespace characters
@@ -63,6 +64,9 @@
 ;#(require 'ede)
 ;#(require 'speedbar)
 ;#(require 'ecb)
+
+;; --- cscope inital directory ---
+(setq cscope-initial-directory (concat "~/tags" (getenv "CLEARCASE_ROOT")))
 
 ;; --- Window Navigation ---
 (require 'windmove)
@@ -316,3 +320,18 @@
 (global-set-key (kbd "C-c <up>")    'windmove-up)
 (global-set-key (kbd "C-c <down>")  'windmove-down)
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(ediff-current-diff-A ((t (:background "brightyellow" :foreground "black" :slant italic))))
+ '(ediff-current-diff-B ((t (:background "brightgreen" :foreground "black" :slant italic))))
+ '(ediff-fine-diff-A ((t (:background "black" :foreground "brightyellow"))))
+ '(ediff-fine-diff-B ((t (:background "black" :foreground "brightgreen")))))
