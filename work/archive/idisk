@@ -1,0 +1,47 @@
+#!/bin/sh
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+
+usage()
+{
+   echo "Usage $exe [-u <username>]"
+   echo 
+   echo "Mounts MobileMe iDisk to /mnt/iDisk"
+   echo " example:"
+   echo "    $exe -u monty"
+   echo
+}
+
+idisk ()
+{
+if [ -z "$user" ]; then
+    usage
+    exit 1
+fi
+
+echo "Mounting iDisk to /mnt/iDisk"
+sudo mount -t davfs http://idisk.me.com/$user /mnt/iDisk
+}
+
+while getopts ":u:" arg; do
+  case $arg in
+    u)
+      user=$OPTARG
+      #echo "-u was triggered, Parameter: $OPTARG" >&2
+      ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+shift $(($OPTIND - 1))
+
+$exe $*

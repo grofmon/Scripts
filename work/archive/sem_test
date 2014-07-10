@@ -1,0 +1,30 @@
+#!/bin/sh
+
+semaphore="/tmp/diff_cs.lock.d"
+
+semaphore_acquire () {
+    echo "Create a semaphore"
+    wait_time="${2:-5}"
+    while true; do
+        if mkdir ${semaphore} &> /dev/null ; then
+            break;
+        fi
+        echo "Semaphore already acquired, sleeping for $wait_time"
+        sleep $wait_time
+    done
+}
+
+semaphore_release () {
+    rmdir ${semaphore}
+    echo "Semaphore released"
+}
+
+create_lock_or_wait
+
+echo "Starting process"
+for countdown in 11 10 9 8 7 6 5 4 3 2 1 0 ; do 
+    echo $countdown
+    sleep 1
+done
+echo "Ending process"
+remove_lock

@@ -1,0 +1,318 @@
+;; Monty's .emacs file
+
+;; --- Set proper load paths ---
+(setq load-path (append load-path (list "/ccshare/linux/c_files/monty/bin/elisp"
+                                        "/ccshare/linux/c_files/monty/bin/elisp-local"
+;#                                        "/ccshare/linux/c_files/monty/bin/elisp-local/apel-10.7"
+;#                                        ""/ccshare/linux/c_files/monty/bin/elisp-local/ecb-2.32"
+                                        )))
+
+;; --- Load Libraries ---
+(load-library "shell-command.el")
+;#(load-library "saveplace.el")
+(load-library "clearcase.el")
+(load-library "echostar.el")
+;(load-library "svn.el")
+
+;; -- Set Color --
+;(if (eq window-system 'x)
+;    (progn
+;      (set-foreground-color "grey")
+;      (set-background-color "black")
+;      (set-cursor-color "white")
+;      )
+;  )
+;(if (eq window-system 'mac)
+;    (progn
+;      (set-foreground-color "grey")
+;      (set-background-color "black")
+;      (set-cursor-color "white")
+;      )
+;  )
+
+;    (progn
+;      (set-foreground-color "black")
+;      (set-background-color "white")
+;      (set-cursor-color "grey")
+;      )
+
+;;--- Mail Setup ---
+(setq user-full-name "Montgomery Groff")
+(setq user-mail-address "montgomery.groff@echostar.com")
+(setq mail-default-headers
+      "BCC: montgomery.groff@echostar.com\n")
+
+;; -- Load gtags --
+;#(load-file "~/.emacs-gtags")
+
+;; -- Load CEDET --
+;#(load-file "~/.elisp-local/cedet-1.0pre4/common/cedet.el")
+
+;; -- Load Semantic --
+;; Enabling various SEMANTIC minor modes.  See semantic/INSTALL for more ideas.
+;; * This turns on which-func support (Plus all other code helpers)
+;#(semantic-load-enable-excessive-code-helpers)
+
+;; --- Requirements ---
+(require 'shell-command) ; shell command completion
+(require 'saveplace)     ; save place in files
+(require 'whitespace)    ; show whitespace characters
+(require 'uniquify)      ; unique buffer names
+;(require 'psvn)          ; svn integration
+;; - currently unused
+;#(require 'ede)
+;#(require 'speedbar)
+;#(require 'ecb)
+
+;; --- Window Navigation ---
+(require 'windmove)
+;;(windmove-default-keybindings 'meta)
+
+;; --- Options ---
+;; Set the title frame name
+(setq-default frame-title-format '(buffer-file-name "%f" ("%b")))
+;; Allow recursive dired deletions
+(setq-default dired-recursive-deletes t)
+;; If non-nil each line of text is exactly one screen line, else wrap text.
+(setq-default truncate-lines nil)
+;; Kill the beeps but still show feedback
+(setq-default visible-bell t)
+;; Paste at cursor NOT mouse pointer position
+(setq-default mouse-yank-at-point t)
+;; C-Style
+(setq-default c-set-style "ellemtel")
+;(setq c-default-style "ellemtel")
+;; Use spaces instead of tabs to indent
+(setq-default indent-tabs-mode nil)
+;; Case insensitive search
+(setq-default case-fold-search t)
+;; Turn on region highlighting
+(setq-default transient-mark-mode t)
+;; Highlight during query
+(setq-default query-replace-highlight t)
+;; Use saveplace to remember file location
+(setq-default save-place t)
+;; clearcase stuff
+(setq clearcase-keep-uncheckouts nil)
+(setq clearcase-make-backup-files t)
+(setq clearcase-suppress-checkout-comments t)
+;; smooth scrolling
+(setq-default scroll-margin 1
+              scroll-conservatively 0
+              scroll-up-aggressively 0.01
+              scroll-down-aggressively 0.01)
+;; unique buffer names
+(setq-default uniquify-buffer-name-style 'reverse)
+(setq-default uniquify-separator " | ")
+(setq-default uniquify-after-kill-buffers-p t)
+(setq-default uniquify-ignore-buffers-re "^\\*")
+;; startup screen
+(setq inhibit-startup-screen t)
+;; start in current directory
+;#(setq initial-buffer-choice "./")
+;; scratch buffer message
+(setq initial-scratch-message ";; Monty's scratch buffer")
+
+;; --- Modes ---
+;; Shell command completion
+(shell-command-completion-mode)
+;; Display the column number
+(column-number-mode t)
+;; Use auto-fill (word wrap)
+(auto-fill-mode t)
+;; Turn on paren mode highlight
+(show-paren-mode 1)
+;; Syntax highlighting
+(global-font-lock-mode 1)
+;; ede setup
+;#(global-ede-mode t)
+
+;; --- Replace "yes or no" with y or n ---
+(defun yes-or-no-p (arg)
+  "An alias for y-or-n-p, because I hate having to type 'yes' or 'no'."
+  (y-or-n-p arg))
+
+;; --- Translate ANSI escape sequences into faces ---
+(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+(setq ansi-color-process-output t)
+
+;; --- Printer Setup ---
+;(setq ps-print-header nil) ;;save some paper by not printing the header
+(setq ps-line-number t)
+;; Enscript Setup
+(setq lpr-command "/usr/bin/enscript")
+(setq lpr-switches (list "-Ec" "-j" "--word-wrap" "-C" "-2rG" "--rotate-even-pages"))
+;(setq lpr-switches (list "-DDuplex:true -Ec -j --word-wrap -C -2rG --mark-wrapped-lines=box --rotate-even-pages" (format "--header=%s" (buffer-name))))
+
+;; --- Grep Setup ---
+;(setq grep-command "grep -rne ")
+;(setq grep-window-height 15)
+(setq grep-scroll-output t)
+
+;;;---------------------------------------------------------------------
+;;; --- Compiler Setup ---
+(setq compile-command "time make -j4 -C /vobs/src_tree xip112DevRelease ")
+;(setq compilation-window-height 15)
+(setq compilation-scroll-output t)
+;(setq split-height-threshold 0)
+;(setq split-width-threshold nil)
+
+;;
+;; Fix regexp stack overflow problem in compilation-mode buffers
+;;
+
+(setq compilation-error-regexp-systems-list '(comma))
+
+(defun recompile-quietly ()
+  "Re-compile without changing the window configuration."
+  (interactive)
+  (save-window-excursion
+    (recompile)))
+
+;(defun notify-compilation-result(buffer msg)
+;  "Notify that the compilation is finished, close the *compilation* buffer
+;   if the compilation is successful, and set the focus back to Emacs frame"
+;  (if (string-match "^finished" msg)
+;      (progn
+;;        (delete-windows-on buffer)
+;        (tooltip-show "\n Compilation Successful :-) \n "))
+;    (tooltip-show "\n Compilation Failed :-( \n "))
+;  (setq current-frame (car (car (cdr (current-frame-configuration)))))
+;  (select-frame-set-input-focus current-frame)
+;  )
+
+;(add-to-list 'compilation-finish-functions
+;                  'notify-compilation-result)
+
+;;;---------------------------------------------------------------------
+;;; display-buffer
+
+;; The default behaviour of `display-buffer' is to always create a new
+;; window. As I normally use a large display sporting a number of
+;; side-by-side windows, this is a bit obnoxious.
+;;
+;; The code below will make Emacs reuse existing windows, with the
+;; exception that if have a single window open in a large display, it
+;; will be split horisontally.
+
+(setq pop-up-windows nil)
+
+(defun my-display-buffer-function (buf not-this-window)
+  (if (and (not pop-up-frames)
+           (one-window-p)
+           (or not-this-window
+               (not (eq (window-buffer (selected-window)) buf)))
+           (> (frame-width) 162))
+      (split-window-horizontally))
+  ;; Note: Some modules sets `pop-up-windows' to t before calling
+  ;; `display-buffer' -- Why, oh, why!
+  (let ((display-buffer-function nil)
+        (pop-up-windows nil))
+    (display-buffer buf not-this-window)))
+
+(setq display-buffer-function 'my-display-buffer-function)
+
+;;;---------------------------------------------------------------------
+;; --- Setup Ediff ---
+;(load-library "ediff")
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(setq ediff-split-window-function 'split-window-horizontally)
+
+;; --- Setup rect-mark. Support for marking a rectangle of text with highlighting ---
+(load-library "rect-mark.el")
+(define-key ctl-x-map [f12] 'rm-set-mark)
+(define-key ctl-x-map [f11] 'rm-exchange-point-and-mark)
+(define-key ctl-x-map [f10] 'rm-kill-region)
+(define-key ctl-x-map [f9] 'rm-kill-ring-save)
+(define-key global-map [S-down-mouse-1] 'rm-mouse-drag-region)
+(autoload 'rm-set-mark "rect-mark"
+  "Set mark for rectangle." t)
+(autoload 'rm-exchange-point-and-mark "rect-mark"
+  "Exchange point and mark for rectangle." t)
+(autoload 'rm-kill-region "rect-mark"
+  "Kill a rectangular region and save it in the kill ring." t)
+(autoload 'rm-kill-ring-save "rect-mark"
+  "Copy a rectangular region to the kill ring." t)
+(autoload 'rm-mouse-drag-region "rect-mark"
+  "Drag out a rectangular region with the mouse." t)
+
+;; -- Define modes for files
+;(setq auto-mode-alist 
+;      (append (list (cons "\\.cc$" 'c++-mode)
+;                    (cons "\\.C$"  'c++-mode)
+;                    (cons "\\.H$"  'c++-mode)
+;                    (cons "\\.c$"  'c-mode)
+;                    (cons "\\.h$"  'c-mode)
+;                    (cons "\\.h$"  'c++-mode)
+;                    (cons "\\.cpp$" 'c++-mode)
+;                    (cons "\\.p$"   'pascal-mode)
+;                    (cons "\\.pl$"  'perl-mode)
+;                    (cons "[Mm]akefile" 'makefile-mode)
+;                    (cons "\\.mak$" 'makefile-mode)
+;                    (cons "\\.mk$" 'makefile-mode)
+;                    (cons "\\.txt$" 'text-mode)
+;                    (cons "\\.ada$" 'ada-mode)
+;                    (cons "\\.idl$" 'c++-mode)
+;                    (cons "\\.tex$" 'latex-mode)
+;                    (cons "\\.scm$" 'scheme-mode)
+;                    (cons "\\.jj$" 'java-mode)
+;                    (cons "\\.xml$" 'xml-mode)
+;                    )
+;              auto-mode-alist))
+
+;; -- Define c-style
+(defun monty-c-setup ()
+  (setq c-set-style "ellemtel")
+  (setq indent-tabs-mode nil) ;;use only spaces not tab characters (0x9) in code
+  )
+(add-hook 'c-mode-common-hook 'monty-c-setup)
+
+;; Delete whitespace from here to next word                                    
+;(defun whack-whitespace (arg)
+;      "Delete all white space from point to the next word.  With prefix ARG
+;    delete across newlines as well.  The only danger in this is that you
+;    don't have to actually be at the end of a word to make it work.  It        
+;    skips over to the next whitespace and then whacks it all to the next       
+;    word."
+;      (interactive "P")
+;      (let ((regexp (if arg "[ \t\n]+" "[ \t]+")))
+;        (re-search-forward regexp nil t)
+;        (replace-match "" nil nil)))
+
+;; --- Setup special characters for whitespace-maode ---
+(load-library "whitespace-mode.el")
+(setq whitespace-display-mappings
+    '(
+      (space-mark   ?\     [?.]      [?_]) ; space - centered dot
+      (space-mark   ?\xA0  [?.]      [?_]) ; hard space - currency
+      (space-mark   ?\x8A0 [?.]      [?_]) ; hard space - currency
+      (space-mark   ?\x920 [?.]      [?_]) ; hard space - currency
+      (space-mark   ?\xE20 [?.]      [?_]) ; hard space - currency
+      (space-mark   ?\xF20 [?.]      [?_]) ; hard space - currency
+      (newline-mark ?\n    [?$ ?\n])       ; eol - dollar sign
+      (tab-mark     ?\t    [?^ ?\t]   [?\\ ?\t]) ; tab - left quote mark
+      ))
+
+;; --- Global key bindings ---
+(global-set-key [f1] 'overwrite-mode)
+(global-set-key [f2] 'switch-to-buffer)
+(global-set-key [f3] 'shell-command)
+(global-set-key [f4] 'compile)
+(global-set-key [f5] 'find-tag)
+(global-set-key [f6] 'find-tag-regexp)
+(global-set-key [f7] 'gtags-find-pattern)
+(global-set-key [f8] 'lgrep)
+(global-set-key [f9] 'grep)
+;[f10] Reserved for menu
+(global-set-key [f11] 'grep-find)
+(global-set-key [f12] 'rgrep)
+(global-set-key "\eg" 'goto-line)
+(global-set-key "\eu" 'undo)
+(global-set-key "\es" 'shrink-window)
+(global-set-key "\e1" 'fixup-whitespace)
+(global-set-key (kbd "C-c <left>")  'windmove-left)
+(global-set-key (kbd "C-c <right>") 'windmove-right)
+(global-set-key (kbd "C-c <up>")    'windmove-up)
+(global-set-key (kbd "C-c <down>")  'windmove-down)
+

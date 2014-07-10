@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ -z $1 ]; then
+ echo "Usage: objcopy [option(s)] in-file [out-file]"
+fi
+
+if [ -z $2 ]; then
+ echo "Usage: objcopy [option(s)] in-file [out-file]"
+fi
+
+mot=$1
+bin=$2
+
+objcopy -I srec -O binary $1 $2

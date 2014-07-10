@@ -1,0 +1,51 @@
+#!/bin/sh
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+
+branch=$2
+
+ct_mkview='cleartool mkview -tag'
+ct_setview='cleartool setview -exec'
+ct_rmview='cleartool rmview -tag'
+config_dir='/ccshare/linux/c_spec/'
+cr_review='/ccshare/linux/cc_tools/cr_review'
+
+usage()
+{
+   echo "Usage $exe cr_num [d]"
+   echo "Run code review script on the specified CR number."
+   echo
+   echo "   [d] Passes the 'd' option for a branch compare" 
+   echo
+   echo "examples:"
+   echo "   $exe 8179"
+   echo "   $exe 8179 d"
+   echo
+}
+
+crev ()
+{
+    cr=`echo $1 | sed 's/cr//'`
+    view="$USER"_code_review_$cr
+    config_spec=$config_dir*cr$cr*.txt
+
+    if [ -n "$cr" ]; then
+        $ct_mkview $view ~/views/$view.vws > /dev/null 2>&1
+        $ct_setview "cleartool setcs $config_spec" $view > /dev/null 2>&1 
+        $ct_setview "$cr_review $config_spec $branch;./cr_sh" $view > /dev/null 2>&1
+        $ct_setview "rm -f cr_sh list_sh tmp1" $view > /dev/null 2>&1
+        $ct_rmview $view $quiet
+    else
+        usage
+        exit 1
+    fi
+}
+
+if [ -z $1 ]; then
+   usage
+   exit 1
+fi
+
+shift $(($OPTIND - 1))
+
+$exe $*

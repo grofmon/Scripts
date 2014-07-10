@@ -1,0 +1,80 @@
+#!/bin/sh
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+
+option=
+
+usage()
+{
+   echo "Usage $exe [-options] <screen_name>"
+   echo "Manages 'screen' sessions. Running with no options creates a"
+   echo "new session with the give name"
+   echo 
+   echo "   -d Dettach session" 
+   echo "   -r Reattach session" 
+   echo "   -l List sessions" 
+   echo
+   echo "examples:"
+   echo "   $exe myscreen"
+   echo "   $exe -d myscreen"
+   echo "   $exe -r myscreen"
+   echo "   $exe -l"
+   echo
+exit 1
+}
+
+sc ()
+{
+if [ "$opt" = "d" ]; then
+    screen -d $scr
+elif [ "$opt" = "r" ]; then
+    screen -rd $scr
+elif [ "$opt" = "l" ]; then
+    screen -ls
+elif [ -z $2 ]; then
+    screen -S $1 -t $1
+else
+   usage
+   exit 1
+fi
+}
+
+if [ -z $1 ]; then
+   usage
+   exit 1
+fi
+
+while getopts ":d:r:l" args;
+do
+    case $args in
+        d)
+            opt="d"
+            scr=$OPTARG
+            ;;
+        r)
+            opt="r"
+            scr=$OPTARG
+            ;;
+        l) 
+            opt="l"
+            ;;
+        \?)
+            echo
+            echo -e "\e[1;32mInvalid option: -$OPTARG\e[0m" >&2
+            echo
+            usage
+            exit 1
+            ;;
+        :)
+            echo
+            echo -e "\e[1;31mOption -$OPTARG requires an argument.\e[0m" >&2
+            echo
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+$exe $*

@@ -1,0 +1,73 @@
+# .alias
+
+## Add color to directory listings
+alias ls='ls --color=auto' 
+alias l.='ls -d .* --color=auto'
+alias ll='ls -lh --color=auto'
+
+## XiP Products
+alias cdv='cd /vobs/src_tree'
+alias clean_xip="ct lspriv -other | grep -v "/vobs/os" | grep -v "/vobs/broadcom" | grep -v "/vobs/opensource" | xargs rm -rf"
+alias clean_opnsrc="ct lspriv -other | grep "/vobs/opensource" | xargs rm -rf"
+alias clean_bcm="ct lspriv -other | grep "/vobs/broadcom" | xargs rm -rf"
+alias clean_os="ct lspriv -other | grep "/vobs/os" | xargs rm -rf"
+alias clean_all='clean_xip;clean_bcm;clean_opnsrc;clean_os'
+
+## Print a timestamp
+alias timestamp='date +%Y%m%d-%H%M%S'
+
+## screen
+alias scd='sc -d'
+alias scl='sc -l'
+alias scr='sc -r'
+
+## linux helpers
+alias bu='find -name "*BAK"; find -iname "*~"'
+alias rw='find -iname "*.[ch]" -perm 664'
+alias reboot='echo Not here dumbass...'
+
+## ClearCase
+alias ccdate='date;date -u "+ -nocheckout -time %d-%B-%Y.%H:%MUTC"'
+alias ct=/opt/rational/clearcase/bin/cleartool
+alias xc=/opt/rational/clearcase/bin/xclearcase
+alias mtool=/opt/rational/clearcase/bin/multitool
+alias go_ccadmin='sudo /bin/su ccadmin -'
+alias cpr='cleartool lsprivate'               # list private files for this view
+alias cco='cleartool co -nc'                  # check out (no comments)
+alias cuc='cleartool unco -rm'                # un-check out and remove local copy
+alias cci='cleartool ci'                      # check in
+alias cls='cleartool lsco -r -cview -me'      # list checked out files by me
+alias clsva='cleartool lsview | grep $USER'   # list my views
+alias clsv='cleartool lsview -host $HOSTNAME | grep $USER' # list all views on host
+alias clsa='cleartool lsco -avobs -cview -me' # list checked out files by all
+alias clsu='cleartool lsco -r -user'          # list checked out files by user
+alias csv='cleartool setview'                 # set view
+alias cev='cleartool endview -ser'            # end view and stop the view server
+alias crm='cleartool rmview -tag'             # remove view
+alias cec='cleartool edcs'                    # edit config spec
+alias ckw='killall -9 view_server'            # killall views
+alias cac='cleartool catcs'                   # cat config spec
+alias cvx='xclearcase&'                       # starts clearcase gui
+alias crv='crev'                              # Code review
+alias ceva='for i in `cleartool lsview -s | grep monty`;do echo "Ending $i view";cleartool endview -ser $i;done'
+
+# config spec stuff
+alias 813-latest='ls -t /ccshare/linux/c_files/xip/813/*.cs | head -1'
+alias 913-latest='ls -t /ccshare/linux/c_files/xip/913/*.cs | head -1'
+alias 110-latest='ls -t /ccshare/linux/c_files/xip/110/*.cs | head -1'
+alias 111-latest='ls -t /ccshare/linux/c_files/xip/110rc/*.cs | head -1'
+alias 112-latest='ls -t /ccshare/linux/c_files/xip/112/*.cs | head -1'
+
+# colorize make
+#alias make='/ccshare/linux/c_files/monty/bin/colormake'
+
+# time
+alias time='/usr/bin/time -f "\nBuild time: %E\n"'
+
+# grep color
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# convert mot to binfile
+alias m2b='objcopy -I srec -O binary'

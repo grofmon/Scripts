@@ -1,0 +1,12 @@
+#!/bin/sh
+if [ -z "$1" ]; then
+   echo "Usage: udcs <config_spec>"
+   echo ""
+   echo " This program will update the config spec on ccshare with"
+   echo " the specified config spec data."
+   echo "  Example:"
+   echo "   udcs ~/daily_build/evtc_dev_092512_0800.cfg"
+   echo ""
+else
+   cat $1 > /ccshare/linux/c_files/evtc/config_spec/evtc_cs.cfg
+fi

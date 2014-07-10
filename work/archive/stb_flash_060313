@@ -1,0 +1,114 @@
+#!/bin/sh
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+
+date_stamp=`date +%m%d%y`
+basedir=/home/monty/cc_bld/
+box_flash=/home/monty/bin/box_flash
+view_name=`echo $CLEARCASE_ROOT | sed 's/\/view\///g'`
+
+usage ()
+{
+   echo "Usage $exe -i <ip addr> -m <model>"
+   echo "Prints the necessary commands to program flash using mtd_update."
+   echo
+   echo "  Where:"
+   echo "   <ip addr> is the last digit of the stb ip address"
+   echo "   <model>   is the stb model to be flashed"
+   echo
+   echo "examples:"
+   echo "   $exe -i 2 -m 813"
+   echo "   $exe -i 3 -m 110"
+   echo "   $exe -i 4 -m 913"
+   echo "   $exe -i 5 -m 112"
+   echo
+   echo "all options:"
+   echo "    -i last digit of ip address"
+   echo "    -m model"
+   echo "    -l software label"
+   echo "    -n don't auto run box_flash"
+}
+
+yes_no () 
+{
+   yes=
+   answer=${1:-y}
+   while [ 1 ]
+   do
+      read -p "Proceed with jamming the image? (y/n) [$answer]: " yn
+      yn=${yn:-$answer}
+      case "$yn" in
+         [yY]|[yY][eE][sS]) yn='Y'; break ;;           
+         [nN]|[nN][oO]) yn='N'; break ;;
+      esac
+   done
+}
+
+stb_flash ()
+{
+    if [ ! -z "$label" ]; then
+        tag="$label"_
+    fi
+
+    if [ -z "$ip" -o -z "$model" ]; then
+        usage
+        exit 1
+    fi
+
+    if [ ! -z "$1" ]; then
+        # Passed in a bin file name
+        bin=$1
+    else
+        if [ "$model" = "813" -o "$model" = "110" -o "$model" = "913" -o "$model" = "112" ]; then
+            hex=/vobs/src_tree/build/link/appcreate/gandalf_dev_debug.bin
+            bin="$view_name"_"$tag""$date_stamp".bin
+        else
+            echo "Not implemented for Model $model"
+            exit 1
+        fi
+
+        # Copy the bin file to ~/cc_bld/$model
+        if [ -e "$hex" ]; then
+            cp $hex $basedir/$model/$bin
+        else
+            echo "BIN file does not exist: $hex"
+            exit 1
+        fi
+    fi
+
+    echo "-------------------"
+    echo "ip       : $ip"
+    echo "model    : $model"
+    echo "bin      : $bin"
+    echo "-------------------"
+#    jam_tool $bin
+#    echo box_flash $ip $model $bin
+#    yes_no
+#    if [ "$yn" = "Y" ]; then
+        box_flash $ip $model $bin        
+#    else
+#        exit 1
+#    fi        
+}
+
+while getopts ":i:m:l:" arg; do
+  case $arg in
+    i) ip=192.168.1.$OPTARG ;;
+    m) model=$OPTARG ;;
+    l) label=$OPTARG ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+shift $(($OPTIND - 1))
+
+$exe $*

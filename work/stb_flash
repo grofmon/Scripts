@@ -1,0 +1,70 @@
+#!/bin/sh
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+
+date_stamp=`date +%m%d%y`
+basedir=/home/monty/stb/
+box_flash=/home/monty/bin/box_flash
+view_name=`echo $CLEARCASE_ROOT | sed 's/\/view\///g'`
+
+ip=$1
+model=$2
+binfile=$3
+
+
+usage ()
+{
+   echo "Usage $exe <ip addr> <model> <bin file>"
+   echo "Prints the necessary commands to program flash using mtd_update."
+   echo
+   echo "  Where:"
+   echo "   <ip addr>  is the stb ip address"
+   echo "   <model>    is the stb model to be flashed"
+   echo "   <bin file> is the binary to be programmed to flash, can be empty"
+   echo "              to use binary from current view"
+   echo
+   echo "examples:"
+   echo "   $exe -i 192.168.1.202 112"
+   echo "   $exe -i 192.168.1.202 813 myfile.bin"
+   echo
+}
+
+stb_flash ()
+{
+    if [ -z "$ip" -o -z "$model" ]; then
+        usage
+        exit 1
+    fi
+
+    if [ ! -z "$binfile" ]; then
+        # Passed in a bin file name
+        bin=$binfile
+    else
+        if [ "$model" = "813" -o "$model" = "110" -o "$model" = "913" -o "$model" = "112"  -o "$model" = "110rc" ]; then
+            hex=/vobs/src_tree/build/link/appcreate/gandalf_dev_debug.bin
+            bin="$view_name"_"$tag""$date_stamp".bin
+            csfile="$view_name"_"$tag""$date_stamp".cs
+            cleartool catcs > $basedir/$model/$csfile
+        else
+            echo "Not implemented for Model $model"
+            exit 1
+        fi
+
+        # Copy the bin file to ~/stb/$model
+        if [ -e "$hex" ]; then
+            cp $hex $basedir/$model/$bin
+        else
+            echo "BIN file does not exist: $hex"
+            exit 1
+        fi
+    fi
+
+    echo "-------------------"
+    echo "ip       : $ip"
+    echo "model    : $model"
+    echo "bin      : $bin"
+    echo "-------------------"
+    box_flash $ip $model $bin        
+}
+
+$exe $*

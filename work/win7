@@ -1,0 +1,2 @@
+#!/bin/sh
+virtualbox --startvm Win7

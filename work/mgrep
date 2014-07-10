@@ -1,0 +1,36 @@
+#!/bin/sh
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+
+
+
+mgrep ()
+{
+    if [ -z "$type" ]; then
+        type='*'
+    else
+        type="*.$type"
+    fi
+    set -x    #echo on
+    grep -rn --include=$type --color=auto $*
+}
+
+while getopts "t:" arg; do
+  case $arg in
+    t) type=$OPTARG ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+shift $(($OPTIND - 1))
+
+$exe $*

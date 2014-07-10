@@ -1,0 +1,63 @@
+#!/bin/sh
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+
+ct_findm='cleartool findm . -fver'
+
+usage()
+{
+   echo "Usage $exe [options] release_branch"
+   echo "Run findmerge on the specified clearcase branch."
+   echo
+   echo "   -m Perfrom the merge"
+   echo "   -p Print the results only"
+   echo
+   echo "examples:"
+   echo "   $exe -m inv_project_rel_100"
+   echo "   $exe -p inv_project_rel_100"
+   echo
+}
+
+findmerge ()
+{
+    echo "$ct_findm  .../$branch/LATEST $opt"
+
+    $ct_findm  .../$branch/LATEST $opt
+}
+
+if [ -z $1 ]; then
+    usage
+    exit 1
+fi
+
+while getopts ":m:p:" args;
+do
+    case $args in
+        m)
+            opt="-qal -gmerge"
+            branch=$OPTARG
+            ;;
+        p)
+            opt="-print"
+            branch=$OPTARG
+            ;;
+        \?)
+            echo
+            echo -e "\e[1;32mInvalid option: -$OPTARG\e[0m" >&2
+            echo
+            usage
+            exit 1
+            ;;
+        :)
+            echo
+            echo -e "\e[1;31mOption -$OPTARG requires an argument.\e[0m" >&2
+            echo
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+
+$exe $*

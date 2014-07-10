@@ -1,0 +1,33 @@
+# .bashrc
+
+# User specific aliases and functions
+export PATH=/ccshare/linux/c_files/monty/bin:$PATH
+
+# Source global aliases
+if [ -f /ccshare/linux/c_files/monty/bin/alias ]; then
+   . /ccshare/linux/c_files/monty/bin/alias
+fi
+
+# remove duplicates from history and ignore lines beginning with space
+export HISTCONTROL=ignoreboth:erasedups
+
+## Clearcase setup
+export PATH=$PATH:/ccshare/linux/cc_tools/perl_scripts:/ccshare/linux/c_scripts:/ccshare/linux/cc_tools:/ccshare/linux/cc_tools/build_scripts:/ccshare/linux/cc_tools/perl_scripts
+umask 0002
+
+# Setup default editor
+export EDITOR='emacs -nw'
+alias emacs='emacs -nw'
+alias emacsw='/usr/local/bin/emacs'
+
+if [ -z ${CLEARCASE_ROOT} ]; then
+    # Standard color prompt
+    PS1='\u@\[\e[31m\]\h\[\e[0m\]: \W\$ '
+else
+    # change the prompt to reflect the name of the cc view
+    if [ -z $EMACS ]; then
+        PS1='\[\e]0;[`echo ${CLEARCASE_ROOT} | cut -b 7-`] \w\a\]'"\[\e[32m\]`echo ${CLEARCASE_ROOT} | cut -b 7-`\[\e[0m\]: \W\$ "
+    else
+        PS1='\[\e[32m\]`echo ${CLEARCASE_ROOT} | cut -b 7-`\[\e[0m\]: \W\$ '
+    fi
+fi

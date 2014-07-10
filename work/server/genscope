@@ -1,0 +1,23 @@
+#!/bin/sh
+tag_dir=~/tags${CLEARCASE_ROOT}
+mkdir -p $tag_dir
+echo "Generating cscope.files. Please wait..."
+#find /vobs/ -type f -iname '*.[ch]' 2> /dev/null | grep -v /vobs/os/ | grep -v /vobs/broadcom/ | grep -v /vobs/opensource/ | grep -v /vobs/drivers/ | grep -v /vobs/vendor/ | grep -v /vobs/src_tree/boot/ | grep -v /vobs/src_tree/drivers/ | grep -v /vobs/src_tree/isa/ | grep -v /vobs/src_tree/tools/ > $tag_dir/cscope.files
+#find /vobs/src_tree -type f -iname '*.[ch]' > $tag_dir/cscope.files 
+find /vobs/ \
+    -path "/vobs/broadcom/*" -prune -o \
+    -path "/vobs/drivers/*" -prune -o \
+    -path "/vobs/opensource/*" -prune -o \
+    -path "/vobs/os/*" -prune -o \
+    -path "/vobs/src_tree/boot/*" -prune -o \
+    -path "/vobs/src_tree/drivers/*" -prune -o \
+    -path "/vobs/src_tree/isa/*" -prune -o \
+    -path "/vobs/src_tree/tools/*" -prune -o \
+    -path "/vobs/vendor/*" -prune -o \
+    -type f -iname "*.[ch]" \
+    -print 2>/dev/null > $tag_dir/cscope.files
+echo "Building cscope database. Please wait..."
+cd $tag_dir
+cscope -b
+echo "Database file generated in $tag_dir"
+echo "Done."

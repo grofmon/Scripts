@@ -1,0 +1,73 @@
+#!/bin/bash
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+ct=cleartool
+
+if [ -z $1 ]; then
+    echo "Usage:"
+    echo "       con_check <dir> <vobs-name>"
+    echo "con_check stbctrl        : check CRs for common files"
+    echo "con_check src_tree gdev  : check CRs for common files and modified files against the version of GDEV branch located in the config spec."
+    exit 1
+fi
+
+function ele()
+{
+  if [ $# == 0 ]; then
+     cr=`echo $CLEARCASE_ROOT | cut -d'/' -f3 | awk -F'_' '{print $NF}'`
+     cleartool find `pwd` -ele "brtype(`ls /ccshare/linux/c_spec/*$cr* | cut -d'/' -f5 | sed -e 's/_configspec.txt/ /'`)" -print | cut -d'@' -f1
+  else
+     cleartool find /vobs/$1 -ele "brtype(`ls /ccshare/linux/c_spec/*$2* | cut -d'/' -f5 | sed -e 's/_configspec.txt/ /'`)" -print | cut -d'@' -f1
+  fi
+}
+
+
+
+function con_check()
+{
+   IFS=$(echo -en "\n\b");
+   rm /tmp/tst_list;
+   touch /tmp/tst_list;
+   rm /tmp/tst_branch_merge;
+   touch /tmp/tst_branch_merge
+   rm /tmp/con_check_result_list.txt
+   touch /tmp/con_check_result_list.txt
+   branch=""
+   if [[ $2 ]]; then
+      branch=`cleartool catcs | grep -i "$1.*$2-" | awk '{print $3}'`
+   fi
+   echo "branch $branch"
+   for x in `cleartool catcs | grep $1 | grep -v "^#" | grep -o -P '.{0,0}_cr.{2,5}'`; do
+      echo "Collecting file list for $x"
+      for y in `ele $1 $x`; do
+         echo "$y $x" | grep -e"\.[ch]" -e"\.ch" >> /tmp/tst_list;
+         if [[ $branch ]]; then
+            echo "cleartool findmerge $y -fver $branch -print"
+            cleartool findmerge $y -fver $branch -print | grep -v "Log has been written" >> /tmp/tst_branch_merge;
+         fi
+      done;
+   done;
+
+   sort /tmp/tst_list -o /tmp/tst_list
+   echo; echo; echo "### CR CONFLICT RESULTS ###";
+   for x in `cat /tmp/tst_list`; do
+      y=`echo $x | awk '{print $1}'`;
+      z=`echo $x | awk '{print $2}'`;
+      #echo "x $x y $y z$z"
+      for match in `grep -w $y /tmp/tst_list | grep -v $z`
+      do
+         cr=`echo $match | awk '{print $2}'`
+         file="$y@@/main/*/*$cr/LATEST"
+         echo "$match $file" >> /tmp/con_check_result_list.txt
+      done
+   done
+   sort /tmp/con_check_result_list.txt -o /tmp/con_check_result_list.txt;
+   rm findmerge.log.*
+   cat /tmp/con_check_result_list.txt
+   if [[ $branch ]]; then
+      echo; echo; echo "### BRANCH CONFLICT RESULTS ###";
+      cat /tmp/tst_branch_merge | uniq
+   fi
+}
+
+$exe $*

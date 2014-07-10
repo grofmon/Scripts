@@ -1,0 +1,11 @@
+#!/bin/sh
+DATE=`date +%Y%m%d`
+
+daily_dir=/ccshare/linux/c_files/delta/daily_build
+local_dir=/home/monty/cc_bld/DELTA
+daily_file=$daily_dir/delta_dev_"$DATE".bin
+local_file=$local_dir/delta_dev_"$DATE"_daily.bin
+
+cp $daily_file $local_file
+echo "Copied daily build file to $local_dir:"
+echo "   delta_dev_"$DATE"_daily.bin"

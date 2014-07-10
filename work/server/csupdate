@@ -1,0 +1,17 @@
+#!/bin/sh
+prod=$1
+csname=$2
+
+if [ -z $1 ]; then 
+    echo "Need a product"
+    exit 1
+fi
+
+if [ -z $2 ]; then
+    echo "Need label name"
+    exit 1
+fi
+
+cs=/ccshare/linux/c_files/monty/stb/proposed/XIP"$prod"_"$csname".cs
+cleartool setcs $cs
+

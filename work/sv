@@ -1,0 +1,170 @@
+#!/bin/sh
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+ct=/opt/rational/clearcase/bin/cleartool
+
+usage ()
+{
+   echo "Usage $cmd [OPTION]..."
+   echo "Runs the specified ClearCase snapshot view commands."
+   echo
+   echo " Options:"
+   echo "  -c    Remove private files (NOTE: may remove checked out files)"
+   echo "        If no arguments are provided, the current directory will be"
+   echo "        evaluated. Passing in 'all' will clean all vobs in the"
+   echo "        snapshot view. The full path of the vob root directory can"
+   echo "        also be specified (e.g. /vobs/src_tree)"
+   echo "  -d    Print the snapshot view base directory"
+   echo "  -h    List hijacked files"
+   echo "        If no arguments are provided, the current directory will be"
+   echo "        evaluated. Passing in 'all' will clean all vobs in the"
+   echo "        snapshot view. The full path of the vob root directory can"
+   echo "        also be specified (e.g. /vobs/src_tree)"
+   echo "  -m    Mount bind /vobs to the snapshot view"
+   echo "        Required argument is the view name"
+   echo "  -p    List private files in all vobs"
+   echo "        If no arguments are provided, the current directory will be"
+   echo "        evaluated. Passing in 'all' will clean all vobs in the"
+   echo "        snapshot view. The full path of the vob root directory can"
+   echo "        also be specified (e.g. /vobs/src_tree)"
+   echo "  -u    Unshare and setup the snapshot view environmen"
+   echo "  -v    Make a new snapshot view"
+   echo "        Required argument is the view name"
+   echo
+   echo " examples:"
+   echo "  $cmd -c /vobs/src_tree"
+   echo "  $cmd -m monty_snap_view"
+   echo "  $cmd -p all"
+   echo
+}
+
+clean ()
+{
+    snapshot_dir=`$ct lsview -cview | awk '{print $2}' | sed -e 's:\(.*\)\.view\.stg:\1:'`
+
+    if [ -z $vob ]; then
+        echo "Cleaning vob $PWD"
+    else
+        echo "Cleaning vob $vob"
+    fi
+
+    if [ "$vob" = "all" ]; then
+        for v in $($ct lsvob -short);
+        do
+            cd $snapshot_dir/$v 2>/dev/null 
+            $ct ls -r -view | xargs -r rm -r
+        done
+    elif [ "$vob" = "." -o -z "$vobs" ]; then
+        $ct ls -r -view | xargs -r rm -r
+    else
+        cd $snapshot_dir/$vob 2>/dev/null
+        $ct ls -r -view | xargs -r rm -r
+    fi
+}
+
+directory ()
+{
+    snapshot_dir=`$ct lsview -cview | awk '{print $2}' | sed -e 's:\(.*\)\.view\.stg:\1:'`
+    echo $snapshot_dir
+}
+
+hijacked ()
+{
+    snapshot_dir=`$ct lsview -cview | awk '{print $2}' | sed -e 's:\(.*\)\.view\.stg:\1:'`
+
+    if [ -z $vob ]; then
+        echo "Checking for [hijacked] files in $PWD"
+    else
+        echo "Checking for [hijacked] files in $vob"
+    fi
+
+    if [ "$vob" = "all" ]; then
+        for v in $($ct lsvob -short);
+        do 
+            cd $snapshot_dir/$v 2>/dev/null
+            $ct ls -r | grep ' \[hijacked\]' | sed -e "s:\\(.*\\):.$v/\\1:"
+        done
+    elif [ "$vob" = "." -o -z "$vobs" ]; then
+        $ct ls -r | grep ' \[hijacked\]' | sed -e 's/\@\@.*//'
+    else
+        cd $snapshot_dir/$vob 2>/dev/null
+        $ct ls -r | grep ' \[hijacked\]' | sed -e 's/\@\@.*//'
+    fi
+}
+
+mount ()
+{
+    cd ~/$view
+    sudo mount -n --bind ~/$view/vobs /vobs
+}
+
+private ()
+{
+    snapshot_dir=`$ct lsview -cview | awk '{print $2}' | sed -e 's:\(.*\)\.view\.stg:\1:'`
+
+    if [ -z $vob ]; then
+        echo "Listing private files in $PWD"
+    else
+        echo "Listing private files in $vob"
+    fi
+
+    if [ "$vob" = "all" ]; then
+        for v in $($ct lsvob -short);
+        do 
+            cd $snapshot_dir/$v 2>/dev/null
+            $ct ls -r -view | sed -e "s:\\(.*\\):.$v/\\1:"
+        done
+    elif [ "$vob" = "." -o -z "$vobs" ]; then
+        $ct ls -r -view | sed -e "s:\\(.*\\):.$v/\\1:"
+    else
+        cd $snapshot_dir/$vob 2>/dev/null
+        $ct ls -r -view | sed -e "s:\\(.*\\):.$v/\\1:"
+    fi
+}
+
+unshare ()
+{
+    sudo unshare -m su - $USER
+}
+
+mkview ()
+{
+    $ct mkview -sna $view
+}
+
+# Check for command line arguments
+if [ $# -eq 0 ]; then
+    usage
+    exit 1
+fi
+
+while getopts ":cdhm:puv:" arg; do
+  case $arg in
+    c) exe=clean
+       vob=$2 ;;
+    d) exe=directory ;;
+    h) exe=hijacked
+       vob=$2 ;;
+    m) exe=mount
+       view=$OPTARG ;;
+    p) exe=private
+       vob=$2 ;;
+    u) exe=unshare ;;
+    v) exe=mkview
+       view=$OPTARG ;;
+    \?)
+      echo -e "\n\e[1;32mInvalid option: -$OPTARG\e[0m\n" >&2
+      usage
+      exit 1
+      ;;
+    :)
+      echo -e "\n\e[1;31mOption -$OPTARG requires an argument.\e[0m\n" >&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+shift $(($OPTIND - 1))
+
+$exe $*

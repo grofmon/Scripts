@@ -1,0 +1,11 @@
+#!/bin/sh
+
+   /home/monty/cs_diff_tool/cs_diff.sh $1 $2 $3;
+   if [[ "$1" =~ "-.*r" ]]; then
+      echo "*************** GENERATING CR REPORT ***************"; echo;
+      /home/monty/cs_diff_tool/cs_diff.sh $1 $2 $3 | grep -v LATEST | grep -v "F1.*F2" | grep "||" > /tmp/csd_vob_changes; sed -i -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" /tmp/csd_vob_changes;
+      /home/monty/cs_diff_tool/cr_list.pl | grep -v "Back to front page" | grep -v "CRCR - Last Updated"
+   fi
+   rm /tmp/mkfile*
+   rm /tmp/csd_*
+

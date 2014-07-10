@@ -1,0 +1,76 @@
+#!/bin/sh
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+
+config_spec="${1}"
+
+usage()
+{
+   echo "Usage $exe config_spec"
+   echo "Dump the version info for LATEST to the screen."
+   echo
+   echo "  example:"
+   echo "     $exe cablebox_cs.txt"
+   echo
+}
+
+yes_no () 
+{
+   yes=
+   answer=${1:-n}
+   while [ 1 ]
+   do
+      read -p "config_spec = $config_spec, is this what you want? (y/n) [$answer]: " yn
+      yn=${yn:-$answer}
+      case "$yn" in
+         [yY]|[yY][eE][sS]) yn='Y'; break ;;           
+         [nN]|[nN][oO]) yn='N'; break ;;
+      esac
+   done
+}
+
+daily_tipcheck()
+{
+    echo ""
+    # First build the initial script, this is needed since we include /ccshare/linux/c_spec/${config_spec}
+    echo "#!/bin/sh" >  tmp1
+    cat /ccshare/linux/c_spec/${config_spec} | sed 's/include/cat/' | sed 's/element/echo \"element/'  | sed '/echo /s/$/"/' >> tmp1
+    chmod +x tmp1
+    # Next, create the secondary script to expand /ccshare/linux/c_spec/${config_spec}
+    echo "#!/bin/sh" >  tmp2
+    ./tmp1 | sed 's/include/cat/' | sed 's/element/echo \"element/'  | sed '/echo /s/$/"/' >> tmp2
+    rm tmp1
+    chmod +x tmp2
+    # Finally, expand the versions of all files included in /ccshare/linux/c_spec/${config_spec}
+    echo "#!/bin/sh" >>  tmp3
+    ./tmp2 | sed 's/include/cat/' | sed 's/element/echo \"element/'  | sed '/echo /s/$/"/' >> tmp3
+    cat tmp3 | sed 's/\/cat\//\/include\//' > cs.sh
+    rm tmp2 tmp3
+    chmod +x cs.sh
+    ./cs.sh
+    rm cs.sh
+}
+
+if [ -n "${config_spec}" ]; then
+#    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+#    echo "WARNING, WARNING, WARNING, WARNING"
+#    echo "    THIS IS AN EXAMPLE SCRIPT"
+#    echo "      USE AT YOUR OWN RISK"
+#    echo "   DOUBLE CHECK THE CONFIG SPEC"
+#    echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+#    echo ""
+#    yes_no
+#    if [ "$yn" = "Y" ]; then
+        config_spec="${1}"
+#    else
+#        echo ""
+#        usage
+#        exit 1
+#    fi        
+else
+    echo ""
+    usage
+    exit 1
+fi
+
+$exe $*

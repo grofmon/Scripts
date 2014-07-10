@@ -1,0 +1,30 @@
+#!/bin/sh
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+
+OLD=$1
+NEW=$2
+ 
+usage()
+{
+ echo "Usage: cc_dif.sh <new_label> <old_label>"
+ exit
+}
+
+label_diff()
+{ 
+    if [ $# -ne 2 ] ; then
+        usage
+        exit
+    else
+        echo -e "Diffing labels"
+        echo -e "\t-- New label: $OLD --"
+        echo -e "\t-- Old label: $NEW --\n"
+    fi
+
+    cleartool find . -version "{(lbtype($OLD) && ! lbtype($NEW))}" -nxname -print 
+
+ # -exec 'cleartool describe -fmt "%Xn \t\tBy: %Fu (%Lu) \n" $CLEARCASE_PN' #| grep -E '.*\.(c|cpp|h|hpp|xml)@'
+}
+
+$exe $*

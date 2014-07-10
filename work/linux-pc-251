@@ -1,0 +1,2 @@
+#!/bin/sh
+gnome-terminal -e "ssh monty@10.79.97.251"

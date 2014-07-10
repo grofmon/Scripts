@@ -1,0 +1,69 @@
+#!/bin/sh
+onhold=false
+datestamp=`date "+%Y%m%d%H%M%S"`
+datemail="`date '+%a %b %d %Y'` at `date '+%T %Z'`"
+datesubj="`date "+%x %R %Z"`"
+
+mailfr="delta-build@echostar.com"
+#mailto="monty@taolam.com"
+mailto="engineering.delta@echostar.com"
+
+bin_dir=/home/monty/bin
+cfg_dir=/ccshare/linux/c_files/delta/config_specs
+tmp_file=/tmp/cs_update
+current_file=$cfg_dir/delta_labels
+archive_file=$cfg_dir/archive/delta_cs_"$datestamp".txt
+cs=/ccshare/linux/c_spec/delta_cs.txt
+
+semaphore="/tmp/diff_cs.lock.d"
+
+semaphore_acquire () {
+#    echo "Create a semaphore"
+    wait_time="${2:-5}"
+    while true; do
+        if mkdir ${semaphore} &> /dev/null ; then
+            break;
+        fi
+        echo "Semaphore already acquired, sleeping for $wait_time"
+        sleep $wait_time
+    done
+}
+
+semaphore_release () {
+    rmdir ${semaphore}
+#    echo "Semaphore released"
+}
+
+semaphore_acquire
+latest=$(
+    $bin_dir/print_cs $cs |
+    grep '^element'
+)
+
+## Old method
+#latest=$(
+#    $bin_dir/print_cs $cs |
+#    sed -ne 's/element \(.*\)/\1/p' |
+#    sed -e 's/ \-nocheckout//' |
+#    sed -e 's/\* //' |
+#    sed -e 's/.*\.\.\. //' |
+#    sed -e 's/\#.*//'
+#)
+
+
+last="0"
+if [ -f $current_file ] ; then
+    last=$(cat $current_file)
+fi
+#if [ "$onhold" != "true" ]; then
+    if [ "$last" != "$latest" ] ; then
+        echo -e "The Delta config_spec (delta_cs.txt) was updated at $datemail. This is an informational message and you are advised to update your local view's config spec as necessary.\nDifferences are outlined below: **\n" > $tmp_file
+        echo "$latest" | diff -U 0 $current_file - | sed ' /+++/d ; /---/d ; s/@@.*@@/\n-- Version update from (-) to (+) --/g' >> $tmp_file
+        echo -e "\n\n** Previous config spec archived as: $archive_file" >> $tmp_file
+        cat $tmp_file | mail -s "Attention: Delta config spec updated ($datesubj)" $mailto -- -f $mailfr
+        rm $tmp_file
+        cp $current_file $archive_file
+        echo "$latest" > $current_file
+    fi
+#fi
+semaphore_release

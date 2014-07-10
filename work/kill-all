@@ -1,0 +1,10 @@
+#!/bin/bash
+
+killall -9 wstlr.mips mocad
+for x in `ps` 
+do 
+y=`echo $x | grep -v hal_init | grep -v procmgr | grep '/mnt/drivers'` 
+if [ $y ]; then 
+killall -9 `basename $y` 
+fi 
+done

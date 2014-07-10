@@ -1,0 +1,66 @@
+#!/bin/sh
+cmd=${0##/*/}
+exe=`echo $cmd | sed 's/.\///'`
+
+box_run=/home/monty/bin/box_run
+
+usage ()
+{
+   echo "Usage $exe -i <ip addr> -m <model>"
+   echo "Prints the necessary commands to run the stb from nfs."
+   echo
+   echo "  Where:"
+   echo "   <ip addr> is the last digit of the stb ip address"
+   echo "   <model>   is the stb model to be flashed"
+   echo
+   echo "examples:"
+   echo "   $exe -i 2 -m DELTA"
+   echo "   $exe -i 3 -m 922"
+   echo
+}
+
+stb_run ()
+{
+    if [ -z "$ip" -o -z "$model" ]; then
+        usage
+        exit 1
+    fi
+
+#    if [ "$model" != "DELTA" ]; then
+#        echo "Not implemented for $model"
+#        exit 1
+#    fi
+
+#    echo "---------------"
+#    echo "telnet $ip"
+#    echo "root"
+#    echo "killall -9 stb_run"
+#    echo "mount -o nolock 192.168.1.1:/home/monty /home"
+#    echo "cd /home/cc_bld/$model"
+#    echo "---------------"
+
+    box_run $ip $model
+
+}
+
+
+while getopts ":i:m:" arg; do
+  case $arg in
+    i) ip=192.168.1.$OPTARG ;;
+    m) model=$OPTARG ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      usage
+      exit 1
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument." >&2
+      usage
+      exit 1
+      ;;
+  esac
+done
+
+shift $(($OPTIND - 1))
+
+$exe $*

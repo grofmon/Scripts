@@ -1,0 +1,7 @@
+#!/bin/sh
+echo "Mounting inwpifil04/engineering"
+sudo mount -t cifs //inwpifil04/engineering /media/engineering -o username=montgomery.groff
+echo "Mounting inwpifil04/eng-pvcs"
+sudo mount -t cifs //inwpifil04/eng-pvcs /media/eng-pvcs -o username=montgomery.groff
+echo "Mounting inwpifil02/montgomery.groff"
+sudo mount -t cifs //inwpifil02/montgomery.groff /media/montgomery.groff -o username=montgomery.groff

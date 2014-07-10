@@ -1,0 +1,23 @@
+#!/bin/sh
+date_stamp=`date +%m%d%y`
+basedir=/ccshare/linux/c_files/monty/stb/
+#view_name=`echo $CLEARCASE_ROOT | sed 's/\/view\///g'`
+view_name=`echo $CLEARCASE_ROOT | sed 's/\/view\/monty_//g' | rev | cut -c 4- | rev`
+
+hex=/vobs/src_tree/build/link/appcreate/gandalf_dev_debug.bin
+bin="$view_name""$tag".bin
+csfile="$view_name""$tag".cs
+
+if [ -z $1 ]; then 
+    echo "Not adding a suffix to the file name"
+else
+    tag="_"$1
+fi
+
+if [ "$1" = "cfg" ]; then
+    cleartool catcs > $basedir/$csfile
+    exit
+fi
+
+cleartool catcs > $basedir/$csfile
+cp $hex $basedir/$bin

@@ -1,0 +1,50 @@
+#!/usr/bin/expect -f
+
+################################################################################
+# Expect script to telnet to a given 
+# ip address and program flash.
+# 
+# Author          : Montgomery Groff
+# Original Author : Vijay.Jayaraman
+# Version         : 1.0
+# Last Updated    : 07-06-2011
+#
+# 1.0 - Copied tnet script and modified for flashing the box
+#
+set box_reboot_version "1.0"
+################################################################################
+
+#puts "box_reboot script version: $box_reboot_version"
+
+if {$argc != 1} {
+        puts "Usage: box_reboot <ip address>"
+        puts "Ex: box_flash 192.168.1.202"
+        exit
+}
+
+# Un-comment "log_user 0" for silent operation
+#log_user 0
+set timeout 2
+set ip [lindex $argv 0]
+set prompt "~ #"
+
+################################################################################
+# User customizable variables - Please customize this for your setup.
+################################################################################
+set ip_address       "192.168.1.1"
+################################################################################
+
+set reboot_cmd       "reboot;exit \r"
+
+for {set x 0} {$x<120} {incr x} {
+    # Open a telnet session to a remote server, and wait for a username prompt.
+    spawn telnet $ip
+
+    # Expect a timeout and then retry again.
+    expect {
+        timeout    {puts "Try Again..."; continue;}
+ 	"login:"   {send "root\r"; expect $prompt; send $reboot_cmd; break}
+    }
+}
+
+interact

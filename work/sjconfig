@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+    echo "Usage: sjconfig <product>"
+    echo "   Where <product> = 112, 813, or 913"
+    echo
+    exit 1;
+fi
+
+TIME=$2
+DATE=`date '+%m%d%y'`
+PROD=$1
+FILE=/home/monty/xip"$PROD"_"$DATE"_"$TIME".cs
+##FILE=/ccshare/linux/c_files/monty/sj/"$PROD"/xip"$PROD"_"$DATE"_"$TIME".cs
+
+LATEST=`ls -t /ccshare/linux/c_files/xip/$PROD/*.cs | head -1`
+
+cat /ccshare/linux/c_files/monty/sj/line-items > $FILE;
+cat $LATEST >> $FILE;
+
+echo "Your config spec is $FILE"

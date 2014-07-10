@@ -1,0 +1,8 @@
+#!/bin/sh
+date_stamp=`date +%m%d%y`
+basedir=/ccshare/linux/c_files/monty/stb
+mv $basedir/*110rc* /home/monty/stb/110rc/
+mv $basedir/*110* /home/monty/stb/110/
+mv $basedir/*813* /home/monty/stb/813/
+mv $basedir/*913* /home/monty/stb/913/
+mv $basedir/*112* /home/monty/stb/112/
