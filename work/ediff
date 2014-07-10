@@ -1,0 +1,20 @@
+#!/bin/sh
+cmd=${0##/*/}
+
+usage ()
+{
+    echo "USAGE: ediff <FILE 1> <FILE 2>"
+}
+
+ediff() 
+{
+    # The --eval flag takes lisp code and evaluates it with EMACS
+    emacs -nw --eval "(ediff-files \"$1\" \"$2\")"
+}
+
+if [ "X${2}" = "X" ]; then
+    usage
+    exit 1
+fi
+
+$cmd $*
