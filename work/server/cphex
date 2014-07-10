@@ -1,6 +1,6 @@
 #!/bin/sh
 date_stamp=`date +%m%d%y`
-basedir=/ccshare/linux/c_files/monty/stb/
+basedir=/ccshare/linux/c_files/monty/builds/
 #view_name=`echo $CLEARCASE_ROOT | sed 's/\/view\///g'`
 view_name=`echo $CLEARCASE_ROOT | sed 's/\/view\/monty_//g' | rev | cut -c 4- | rev`
 
