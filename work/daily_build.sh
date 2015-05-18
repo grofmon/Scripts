@@ -3,13 +3,17 @@
 # Usage: 
 #        daily_build.sh <model> <option>
 #        where:
-#              model is a valid model (110, 813, or 913)
+#              model is a valid model (XIP110, XIP813, or XIP913)
 #              options is either empty or "unique_view"
 
-
 # The first parameter needs to be the model
-if [ "$1" = "110" -o "$1" = "813" -o "$1" = "913" -o "$1" = "112"  -o "$1" = "110rc" ]; then
+if [ "$1" = "XIP110" -o "$1" = "XIP813" -o "$1" = "XIP913" -o "$1" = "XIP112" -o "$1" = "XIP110RC" -o "$1" = "ZIP110" ]; then
     model=$1
+    if [ "$model" = "XIP913" -o "$model" = "XIP112" -o "$model" = "XIP110RC" -o "$model" = "ZIP110" ]; then
+        opengl="true"
+    else
+        opengl="false"
+    fi
 else
     echo "Model not properly defined"
     echo "usage: daily_build.sh <model> <unique_build>"
@@ -26,11 +30,8 @@ RESULT=1
 
 # Update with your email address
 mailto="montgomery.groff@echostar.com"
-<<<<<<< HEAD
-=======
+#mailto="ZIP.Development@echostar.com"
 #mailerr="montgomery.groff@echostar.com"
->>>>>>> 062f2206aaf5433ba5e2715db0d10abaa0e4731d
-#mailto="Engineering.Rigel.SW.Dev@echostar.com"
 mailfr="Daily-Build"
 # Update with your build directory
 daily_dir=/ccshare/linux/c_files/QtReleases/daily_builds/$model
@@ -54,7 +55,14 @@ if [ ! -d $daily_archerr ]; then
     mkdir -p $daily_archerr
 fi
 
-csname=`ls $daily_dir | grep XiP"$model".*.cfg | head -1`
+daily_docs=$daily_dir/html_docs
+# Create the error dir if it doesn't exist
+if [ ! -d $daily_docs ]; then
+    echo "creating $daily_docs"
+    mkdir -p $daily_docs
+fi
+
+csname=`ls $daily_dir | grep "$model".*.cfg | head -1`
 build_id=`echo "$csname" | sed s/\.cfg//g | sed s/_64MB//g`
 new_cs="$daily_dir"/"$csname"
 # Pick up any line items you might have via this file
@@ -74,34 +82,22 @@ fi
 
 # Setup file variables
 daily_bin=$daily_dir/qt_$build_id.bin
-<<<<<<< HEAD
-daily_mot=$daily_dir/qt_$build_id.mot
-daily_log=$daily_dir/qt_$build_id.log
-=======
 daily_upd=$daily_dir/qt_$build_id.update
 daily_mot=$daily_dir/qt_$build_id.mot
 daily_log=/tmp/qt_$build_id.log
->>>>>>> 062f2206aaf5433ba5e2715db0d10abaa0e4731d
-daily_err=$daily_dir/qt_$build_id.err
+daily_err=$daily_archerr/qt_$build_id.err
 daily_cfg=$daily_dir/qt_$build_id.cs
 daily_txt=$daily_dir/qt_$build_id.txt
 daily_pkg=$daily_dir/qt_$build_id.tgz
-<<<<<<< HEAD
-qt_pre=/vobs/vendor/digia/qt/build/XIP913/5.3.2/XIP913_Qt.tar.gz
-=======
-qt_pre=/vobs/vendor/digia/qt/build/XIP"$model"/5.4.0/XIP"$model"_Qt.tar.gz
-if [ "$model" = "913" -o "$model" = "110rc" -o "$model" = "112" ]; then
-    ccmkpre="make -C /vobs/vendor/digia/qt S=XIP$model OPENGL=true prebuilt-package"
-fi
-if [ "$model" = "813" -o "$model" = "110" ]; then
-    ccmkpre="make -C /vobs/vendor/digia/qt S=XIP$model prebuilt-package"
-fi
+qt_pre=/vobs/vendor/digia/qt/build/"$model"/5.4.0/"$model"_Qt.tar.gz
+
+ccmkpre="make -C /vobs/vendor/digia/qt S=$model OPENGL=${opengl} prebuilt-package"
+ccmkdocs='/vobs/gui/qt/tools/generate_docs > /dev/null 2>&1'
 
 tmp_log=/tmp/qt_$build_id.log
 # Redirect output to logfile
 exec > $daily_log 2>&1
 
->>>>>>> 062f2206aaf5433ba5e2715db0d10abaa0e4731d
 BIN_FILE=/vobs/src_tree/build/link/appcreate/gandalf_dev_debug.bin
 UPD_FILE=/vobs/src_tree/build/link/appcreate/gandalf_dev_debug.update
 
@@ -117,53 +113,41 @@ ccconfig_spec="$daily_cfg"
 ### e.g. Adding DTCP=false to the build command
 #ccbuild="`grep make $new_cs | sed 's/#//' | sed 's/\-j. /\-j4 \-C \/vobs\/src_tree /' | sed '$s/\(.*\)/\1 DTCP=false/'`"
 #default-no modifications#ccbuild="`grep -w make $new_cs | sed 's/#//' | sed 's/\-j. /\-j4 \-C \/vobs\/src_tree /'`"
-<<<<<<< HEAD
-ccbuild="`grep 'make ' $new_cs | sed 's/#//' | sed 's/\DevRelease /\DevRelease \-C \/vobs\/src_tree -j8 /' | sed 's/QUIET= >& out//'  | sed 's/NETFLIX_UI=true//'  | sed 's/NETFLIX_DIAL=true//' | sed '$s/\(.*\)/\1 QT_GUI=true QT_QUICK_COMPILER=true QT_GUI_TESTS=true IM_SUPPORT_TOUCHPAD=true EIT_SGS_JSON_FILES=true URSR_BASE=ursr_13_4 EVTC=false\n/'`"
-cccopy="cp $BIN_FILE $daily_bin"
-daily_chmod="find $daily_dir -type f -not -iname *$DATE*.log -exec chmod 644 {} \; >> $daily_log"
-=======
-ccbuild="`grep 'make ' $new_cs | sed 's/#//' | sed 's/-j4/-j8 -C \/vobs\/src_tree /' | sed 's/QUIET= >& out//'  | sed 's/NETFLIX_UI=true//'  | sed 's/NETFLIX_DIAL=true//' | sed '$s/\(.*\)/\1 QT_GUI=true QT_QUICK_COMPILER=true QT_GUI_TESTS=true IM_SUPPORT_TOUCHPAD=true EIT_SGS_JSON_FILES=true URSR_BASE=ursr_13_4 EVTC=false\n/'`"
+#ccbuild="`grep 'make ' $new_cs | sed 's/#//' | sed 's/-j./-j8 -C \/vobs\/src_tree /' | sed 's/QUIET= >& out//'  | sed 's/NETFLIX_UI=true//'  | sed 's/NETFLIX_DIAL=true//' | sed '$s/\(.*\)/\1 QT_GUI=true QT_QUICK_COMPILER=true QT_GUI_TESTS=true DATA_SEARCH=true IM_SUPPORT_TOUCHPAD=true EIT_SGS_JSON_FILES=true EVTC=false\n/'`"
+#ccbuild="`grep 'make ' $new_cs | sed 's/#//' | sed 's/make /make -C \/vobs\/src_tree /' | sed 's/-j./-j8/' | sed 's/QUIET= >& out//'  | sed '$s/\(.*\)/\1 QT_GUI=true QT_QUICK_COMPILER=true QT_GUI_TESTS=true IM_SUPPORT_TOUCHPAD=true EIT_SGS_JSON_FILES=true/'`"
+ccbuild="`grep make $new_cs | sed 's/#//'`"
 
-cccopy="cp $BIN_FILE $daily_bin;cp $UPD_FILE $daily_upd"
+cccopy="cp $UPD_FILE $daily_upd"
 
 daily_chmod="find $daily_dir -type f -not -iname *$DATE*.log -exec chmod 644 {} \;"
->>>>>>> 062f2206aaf5433ba5e2715db0d10abaa0e4731d
-daily_cln="find $daily_archive -mtime +7 -print -delete"
 
 # Used to echo to the file only
 CSV="$ccsetcs $ccview $ccconfig_spec"
 BLD="$ccsetview \"$ccbuild\" $ccview"
 CPY="$ccsetview \"$cccopy\" $ccview"
 PKG="$ccsetview \"$ccmkpre\" $ccview"
+DOC="$ccsetview \"$ccmkdocs\" $ccview"
 MKV="$ccmkview $ccview ~/views/$ccview.vws"
 RMV="$ccrmview $ccview"
 ERR="mv $daily_log $daily_err"
+ERR2="mv $daily_cfg $daily_archerr"
+DCL="find $daily_archive -mtime +60 -print -delete"
+ECL="find $daily_err -mtime +60 -print -delete"
 
 # Set the email messages
-errsubj="BUILD_ERROR: XiP$model Config Spec build failed !! : $DATE"
+errsubj="BUILD_ERROR: $model Config Spec build failed !! : $DATE"
 errtext="BUILD ERROR: see $daily_err"
-subj="XiP$model Config Spec build success : $DATE"
-<<<<<<< HEAD
-text="The XiP daily config spec updated and the latest build completed successfully. The following files are available:\n\nBinary image (untested):\n$daily_bin\n\nQt prebuilt package for this build:\n$daily_pkg\n\nConfig spec used for this build:\n$daily_cfg\n\nBuild log file:\n$daily_log\n\nPrevious builds are located in the 'archive' directory. Archives will be kept for 1 week, then removed from the repository.\n"
-=======
-text="The XiP daily config spec updated and the latest build completed successfully. The following files are available:\n\nBinary image (untested):\n$daily_upd\n\nQt prebuilt package for this build:\n$daily_pkg\n\nConfig spec used for this build:\n$daily_cfg\n\nPrevious builds and logs are located in the 'archive' directory. Archives will be kept for 1 week, then removed from the repository.\n"
->>>>>>> 062f2206aaf5433ba5e2715db0d10abaa0e4731d
+subj="$model Config Spec w/Qt build success : $DATE"
+text="The $model daily config spec updated and the latest build completed successfully. The following files are available:\n\nBinary image (untested):\n$daily_upd\n\nQt prebuilt package for this build:\n$daily_pkg\n\nConfig spec used for this build:\n$daily_cfg\n\nPrevious builds and logs are located in the 'archive' directory. Archives will be kept for 1 week, then removed from the repository.\n"
 
 # Cleanup yesterday's files
 cd $daily_dir > /dev/null 2>&1
-if [ -f *.err ]; then
-<<<<<<< HEAD
-    mv -f *.err *.cs *.tgz $daily_archerr > /dev/null 2>&1
-else
-    mv -f *.bin *.cs *.tgz $daily_archive > /dev/null 2>&1
-    rm *.log *.txt > /dev/null 2>&1
-=======
-    mv -f *.err *.cs *.tgz *.update $daily_archerr > /dev/null 2>&1
-else
-    mv -f *.log *.bin *.cs *.tgz *.update $daily_archive > /dev/null 2>&1
+#if [ -f *.err ]; then
+#    mv -f *.err $daily_archerr > /dev/null 2>&1
+#else
+    find . -maxdepth 1 -type f -mtime +3 -exec mv -f {} $daily_archive  \; > /dev/null 2>&1
     rm *.txt > /dev/null 2>&1
->>>>>>> 062f2206aaf5433ba5e2715db0d10abaa0e4731d
-fi
+#fi
 
 echo "Starting Daily build at `date`"
 echo -e $SEP
@@ -177,7 +161,7 @@ if [ -f $line_items ]; then
 fi
 echo -e "$SEP## $csname $SEP" >> $daily_cfg
 cat $new_cs >> $daily_cfg
-echo -e "$SEP## Build Command \n# $ccbuild $SEP" >> $daily_cfg
+#echo -e "$SEP## Build Command \n# $ccbuild $addl_params $SEP" >> $daily_cfg
 csfiles=`ls *.cfg 2> /dev/null | wc -l`
 if [ "$csfiles" != "0" ]; then
     rm *.cfg
@@ -211,73 +195,55 @@ echo -e $SEP
 $ccsetview "time $ccbuild" $ccview
 #echo "$ccsetview \"$ccbuild\" $ccview"
 STAT=$?
+echo "DONE BUILDING"
 echo -e $SEP
 if [ $STAT != 0 ]; then
     # The build failed, send an email
     $ERR
+    $ERR2
     echo -e "$errtext" | 
-    if [ -f /usr/bin/mailx ]; then
     # SUSE uses mailx
-        mailx -n -s "$errsubj" -r "$mailfr" "$mailto"
-    else
-        # RedHat uses mail
-        mail -s "$errsubj" "$mailto" -- -F "$mailfr" -f "$mailfr"
-    fi
+    mailx -n -s "$errsubj" -r "$mailfr" "$mailto"
 
     RESULT=1
 else
     # The build was successful
     # Copy the .bin file
-<<<<<<< HEAD
-    echo "Executing :: $CPY" >> $daily_log
-    echo -e $SEP >> $daily_log
-    basedir=/ccshare/linux/c_files/QtReleases/daily_builds/$model
-
-    if [ $model = "913" ]; then
-        $ccsetview "cd /vobs/vendor/digia/qt; make S=XIP$model prebuilt-package" $ccview >> $daily_log 2>&1
-        $ccsetview "cp $qt_pre $daily_pkg" $ccview >> $daily_log 2>&1
-    fi
-    $ccsetview "$cccopy" $ccview >> $daily_log 2>&1
-    echo -e $SEP >> $daily_log
-=======
     echo "Executing :: $CPY"
     echo -e $SEP
     $ccsetview "$cccopy" $ccview
     # Create and copy the prebuilt-package
     echo "Executing :: $PKG"
-    echo -e $SEP
+    $ccsetview "rm $qt_pre > /dev/null 2>&1" $ccview
     $ccsetview "$ccmkpre" $ccview
     $ccsetview "cp $qt_pre $daily_pkg" $ccview
     echo -e $SEP
->>>>>>> 062f2206aaf5433ba5e2715db0d10abaa0e4731d
+    echo "Executing :: $DOC"    
+    $ccsetview "$ccmkdocs" $ccview
+    $ccsetview "rm -rf $daily_docs" $ccview
+    $ccsetview "mv -fu /vobs/gui/qt/docs/html $daily_docs" $ccview
+    echo -e $SEP
 
     RESULT=0
 fi
 
-# Cleanup the archived files. Delete files older than 7 days
-echo "Executing :: $daily_cln"
-echo -e $SEP
+# Cleanup the archived files. Delete files older than 30 days
+echo "Executing :: $DCL"
 cd $daily_archive
-find $daily_archive -type f -mtime +7 -print -delete 
+find $daily_archive -type f -mtime +30 -print -delete 
+echo "Executing :: $ECL"
 cd $daily_archerr
-find $daily_archerr -type f -mtime +7 -print -delete 
+find $daily_archerr -type f -mtime +30 -print -delete 
 echo -e $SEP
 
 if [ $RESULT = 0 ]; then
-    if [ "$model" = "913" ]; then
-        mailto="ZIP.Development@echostar.com"
-    fi
-        echo -e "$text" > $daily_txt 
-        cat $daily_txt |
-        if [ -f /usr/bin/mailx ]; then
-            # SUSE uses mailx
-            mailx -n -s "$subj" -r "$mailfr" "$mailto"
-        else
-            # RedHat uses mail
-            mail -s "$subj" "$mailto" -- -F "$mailfr" -f "$mailfr"
-        fi
+    mailto="Engineering.SWXiPDevelopment@echostar.com"
+    echo -e "$text" > $daily_txt 
+    cat $daily_txt |
+    # SUSE uses mailx
+    mailx -n -s "$subj" -r "$mailfr" "$mailto"
     cd $daily_dir
-    mv *.bin *.txt $daily_archive
+    mv *.txt $daily_archive
     mv $daily_log $daily_archive
 fi
 
