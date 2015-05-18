@@ -1,6 +1,7 @@
 #!/bin/sh
 
-array=( 110 110rc 112 813 913 )
+array=( 110 110RC 112 813 913 )
+#array=( 813 913 )
 
 #mailto="Engineering.SWXiPProjectleads@echostar.com, Engineering.EVTC@echostar.com, Engineering-SuperJoey@echostar.com"
 mailto="montgomery.groff@echostar.com"
@@ -11,17 +12,19 @@ do
 datefile="`date '+%a %b %d %Y'` at `date '+%T %Z'`"
 bin_dir=/home/monty/bin
 tmp_file=/tmp/"$prod"_cs_update
-csprevious=`ls -t /ccshare/linux/c_files/xip/"$prod"/*.cs | head -2 | tail -1`
-cscurrent=`ls -t /ccshare/linux/c_files/xip/"$prod"/*.cs | head -1`
-csfile=`echo $cscurrent | sed "s/\/ccshare\/linux\/c_files\/xip\/$prod\///g"`
+csprevious=`ls -t /ccshare/linux/c_files/daily_builds/XiP"$prod"/*.cs | head -2 | tail -1`
+cscurrent=`ls -t /ccshare/linux/c_files/daily_builds/XiP"$prod"/*.cs | head -1`
+csfile=`echo $cscurrent | sed "s/\/ccshare\/linux\/c_files\/daily_builds\/XiP$prod\///g"`
+newcs=`echo $csfile | sed "s/\.cs/\.cfg/"`
 dateprevious=`date -r $csprevious '+%m%d%y_%H00'`
 datecurrent=`date -r $cscurrent '+%m%d%y_%H00'`
-out_file=/ccshare/linux/c_files/xip/$prod/cs_diffs/cs_diff_"$datecurrent"-"$dateprevious".txt
+out_dir=/ccshare/linux/c_files/QtReleases/daily_builds
+out_file=$out_dir/$prod/cs_diffs/cs_diff_"$datecurrent"-"$dateprevious".txt
 
 # First, check to see if the latest version of the config spec is available
 if [ -f $cscurrent ]; then
-# Second, check to see if we have already run the diff
-# -- if diff has already been run, skip it
+# Second, check to see if we have already run the diff"
+# -- if diff has already been run, skip it"
     if [ ! -f "$out_file" ]; then
         semaphore=/tmp/"$prod"_diff_cs.lock.d
 
@@ -45,13 +48,13 @@ if [ -f $cscurrent ]; then
             grep '^element'
         )
 
-        # Create a sanitized version of the previous config spec
+        # Create a sanitized version of the previous config spec"
         previous=$(
             $bin_dir/print_cs $csprevious |
             grep '^element'
         )
 
-        # Copy the previous version into a tmp_file for the diff
+        # Copy the previous version into a tmp_file for the diff"
         echo "$previous" > $tmp_file
 
         if [ "$previous" != "$current" ] ; then
@@ -65,9 +68,9 @@ if [ -f $cscurrent ]; then
                 cat $out_file | mail -n -s "xip config_spec update for $prod" "$mailto" -- -F "$mailfr" -f "$mailfr"
             fi
             rm $tmp_file
-#            if [ "$prod" = "110" -o "$prod" = "112"  -o "$prod" = "813"  -o "$prod" = "913" ]; then
-#                cp $cscurrent /ccshare/linux/c_files/monty/sj/$prod/
-#                chmod +w /ccshare/linux/c_files/monty/sj/$prod/$csfile
+#            if [ "$prod" = "913" -o "$prod" = "813" ]; then
+                cp $cscurrent $out_dir/$prod/$newcs
+                chmod +w $out_dir/$prod/$newcs
 #            fi
         fi
         semaphore_release
