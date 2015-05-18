@@ -1,45 +1,35 @@
 # Change escape key
 escape ``
 
-# Fix for residual text
-altscreen on
+termcapinfo xterm* G0:is=\E[?4l\E>
 
-## Custom statusbar
+shelltitle '$ |bash'
+
+hardstatus alwayslastline
+
 ## No tabs
-hardstatus alwayslastline "%h %= %M %d %c "
-# COLOR VERSION # hardstatus alwayslastline "[%{R}screen: %{G}%t%?%{W}] %h %= %{Y}%M %d %c "
-## With tabs and main screen name
-#hardstatus alwayslastline "[%{R}screen: %{G}%t%?%{W}] %h %= %{= kw}%-w%{= BW}%n %t%{-}%+w %= %{Y}%M %d %c "
-## With tabs
-#hardstatus alwayslastline "%{W}%h %=  %{= kr}%-W %{= kg}[%t]%{-}%+W %= %{Y}%M %d %c "
-
+#hardstatus string '%h %= %M %d %c '
+## COLOR VERSION -- %{wK]
+#hardstatus string '%{wK}[%{R}screen: %{G}%t%?%{W}] %h %= %{Y}%M %d %c '
+## COLOR VERSION -- %{wK] -- Including WINDOWS
+hardstatus string '%{wK} %-Lw %{= bW}%n*%f %t%{-}%+Lw %= %{Y}%D %M %d %c '
 
 ## Turn welcome message off
 #startup_message off
 
 # disable vbell (so wm urgency hints can work from within screen)
-#vbell off
+vbell off
 
-# Increase the scrollback buffer
-#defscrollback 5000
-
-################
-#
-# keybindings
-#
-
-##remove some stupid / dangerous key bindings
+## remove some key bindings
 #bind k
+#bind W
 #bind ^k
 #bind .
 #bind ^\
 #bind \\
 #bind ^h
 #bind h
-##make them better
+## make them safer
 #bind 'K' kill
-#bind 'I' login on
-#bind 'O' login off
-#bind '}' history
-
-
+#bind 'W' windowlist
+#bind 'V' split -v

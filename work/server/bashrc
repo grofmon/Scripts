@@ -20,14 +20,35 @@ export EDITOR='emacs -nw'
 alias emacs='emacs -nw'
 alias emacsw='/usr/local/bin/emacs'
 
-if [ -z ${CLEARCASE_ROOT} ]; then
-    # Standard color prompt
-    PS1='\u@\[\e[31m\]\h\[\e[0m\]: \W\$ '
+pstring=`echo ${CLEARCASE_ROOT} | cut -d/ -f3`
+if [[ ${CLEARCASE_ROOT} ]]; then
+    # Add clearcase view name
+    PS1='\[\e[32m\]${pstring}\[\e[0m\]: \W\$ '
 else
-    # change the prompt to reflect the name of the cc view
-    if [ -z $EMACS ]; then
-        PS1='\[\e]0;[`echo ${CLEARCASE_ROOT} | cut -b 7-`] \w\a\]'"\[\e[32m\]`echo ${CLEARCASE_ROOT} | cut -b 7-`\[\e[0m\]: \W\$ "
-    else
-        PS1='\[\e[32m\]`echo ${CLEARCASE_ROOT} | cut -b 7-`\[\e[0m\]: \W\$ '
-    fi
+    # Standard color prompt
+    PS1='\[\033k\033\\\]\u@\[\e[31m\]\h\[\e[0m\]: \W\$ '
 fi
+
+case ${TERM} in
+    screen*)
+        if [[ ${CLEARCASE_ROOT} ]]; then
+            PROMPT_COMMAND="printf '\033k${pstring}\033\\';"${PROMPT_COMMAND}
+        else
+            PROMPT_COMMAND='echo -ne "\033_${USER}@${HOSTNAME%%.*}:${PWD/$HOME/~}\033\\"'    
+        fi
+        ;;
+esac
+
+#if [ -z ${CLEARCASE_ROOT} ]; then
+#    # Standard color prompt 
+#    PS1='\u@\[\e[31m\]\h\[\e[0m\]: \W\$ '
+#    MY_PROMPT='\h'
+#else
+#    # change the prompt to reflect the name of the cc view
+#    if [ -z $EMACS ]; then
+#        PS1='\[\e]0;[`echo ${CLEARCASE_ROOT} | cut -b 7-`] \w\a\]'"\[\e[32m\]`echo ${CLEARCASE_ROOT} | cut -b 7-`\[\e[0m\]: \W\$ "
+#    else
+#        PS1='\[\e[32m\]`echo ${CLEARCASE_ROOT} | cut -b 7-`\[\e[0m\]: \W\$ '
+#        MY_PROMPT='`echo ${CLEARCASE_ROOT} | cut -b 7-`'
+#    fi
+#fi
