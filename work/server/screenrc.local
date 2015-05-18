@@ -1,0 +1,30 @@
+# Change escape key
+escape ``
+
+shelltitle '$ |bash'
+
+hardstatus alwayslastline
+
+## No tabs
+#hardstatus string '%h %= %M %d %c '
+## COLOR VERSION -- %{wK]
+#hardstatus string '%{wK}[%{R}screen: %{G}%t%?%{W}] %h %= %{Y}%M %d %c '
+## COLOR VERSION -- %{wK] -- Including WINDOWS
+hardstatus string '%{wK}[%{R}%t%{-}] %-Lw %{= bW}%n*%f %t%{-}%+Lw %= %{Y}%D %M %d %c '
+
+## Turn welcome message off
+startup_message off
+
+## disable vbell (so wm urgency hints can work from within screen)
+vbell off
+
+#split -v
+screen
+screen
+#focus
+screen
+#split
+#focus
+screen
+#focus
+

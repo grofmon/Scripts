@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cleartool setcs /ccshare/linux/c_files/monty/builds/temp/$1.cs

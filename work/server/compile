@@ -1,0 +1,23 @@
+#!/bin/bash
+txtto="3038879327@txt.att.net"
+mailto="montgomery.groff@echostar.com"
+mailfr="Local-Build@echostar.com"
+build_command="`cleartool catcs | grep make | sed 's/# //'`"
+model="`cleartool catcs | grep '##### ' | sed 's/##### //'`"
+# Build the code
+echo "Executing :: $build_command"
+sleep 10
+$build_command | tee ~/$model.log
+
+STAT="${PIPESTATUS[0]}"
+# STAT=$?
+
+if [ $STAT != 0 ]; then
+    echo "Build error"
+    # The build failed, send a text
+    echo -e "$build_command" | mailx -n -s "$model build failure" -r "$mailfr" "$mailto"
+else
+    echo "Build success"
+    # The build was successful
+    echo -e "No Issues. Build Complete" | mailx -n -s "$model SUCCESS" -r "$mailfr" "$mailto"
+fi
