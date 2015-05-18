@@ -26,9 +26,10 @@ RESULT=1
 
 # Update with your email address
 mailto="montgomery.groff@echostar.com"
+#mailto="Engineering.Rigel.SW.Dev@echostar.com"
 mailfr="Daily-Build"
 # Update with your build directory
-daily_dir=/ccshare/linux/c_files/monty/sj/$model
+daily_dir=/ccshare/linux/c_files/QtReleases/daily_builds/$model
 # Create the build dir if it doesn't exist
 if [ ! -d $daily_dir ]; then
     echo "creating $daily_dir"
@@ -49,8 +50,8 @@ if [ ! -d $daily_archerr ]; then
     mkdir -p $daily_archerr
 fi
 
-csname=`ls $daily_dir | grep XiP"$model".*.cs | head -1`
-build_id=`echo "$csname" | sed s/\.cs//g | sed s/_64MB//g`
+csname=`ls $daily_dir | grep XiP"$model".*.cfg | head -1`
+build_id=`echo "$csname" | sed s/\.cfg//g | sed s/_64MB//g`
 new_cs="$daily_dir"/"$csname"
 # Pick up any line items you might have via this file
 line_items=$daily_dir/line-items
@@ -59,7 +60,7 @@ if [ $unique_view ]; then
     ccview="$USER"_"$build_id"
 else
     # Re-use the same view every day
-    ccview="$USER"_"$model"
+    ccview="$USER"_qt_"$model"
 fi
 
 if [ ! -f "$new_cs" ]; then
@@ -68,12 +69,14 @@ if [ ! -f "$new_cs" ]; then
 fi
 
 # Setup file variables
-daily_bin=$daily_dir/dev_$build_id.bin
-daily_mot=$daily_dir/dev_$build_id.mot
-daily_log=$daily_dir/dev_$build_id.log
-daily_err=$daily_dir/dev_$build_id.err
-daily_cfg=$daily_dir/dev_$build_id.cfg
-daily_txt=$daily_dir/dev_$build_id.txt
+daily_bin=$daily_dir/qt_$build_id.bin
+daily_mot=$daily_dir/qt_$build_id.mot
+daily_log=$daily_dir/qt_$build_id.log
+daily_err=$daily_dir/qt_$build_id.err
+daily_cfg=$daily_dir/qt_$build_id.cs
+daily_txt=$daily_dir/qt_$build_id.txt
+daily_pkg=$daily_dir/qt_$build_id.tgz
+qt_pre=/vobs/vendor/digia/qt/build/XIP913/5.3.2/XIP913_Qt.tar.gz
 BIN_FILE=/vobs/src_tree/build/link/appcreate/gandalf_dev_debug.bin
 
 # Setup clearcase commands
@@ -87,7 +90,8 @@ ccconfig_spec="$daily_cfg"
 # Make any build command modifications necessary
 ### e.g. Adding DTCP=false to the build command
 #ccbuild="`grep make $new_cs | sed 's/#//' | sed 's/\-j. /\-j4 \-C \/vobs\/src_tree /' | sed '$s/\(.*\)/\1 DTCP=false/'`"
-ccbuild="`grep -w make $new_cs | sed 's/#//' | sed 's/\-j. /\-j4 \-C \/vobs\/src_tree /'`"
+#default-no modifications#ccbuild="`grep -w make $new_cs | sed 's/#//' | sed 's/\-j. /\-j4 \-C \/vobs\/src_tree /'`"
+ccbuild="`grep 'make ' $new_cs | sed 's/#//' | sed 's/\DevRelease /\DevRelease \-C \/vobs\/src_tree -j8 /' | sed 's/QUIET= >& out//'  | sed 's/NETFLIX_UI=true//'  | sed 's/NETFLIX_DIAL=true//' | sed '$s/\(.*\)/\1 QT_GUI=true QT_QUICK_COMPILER=true QT_GUI_TESTS=true IM_SUPPORT_TOUCHPAD=true EIT_SGS_JSON_FILES=true URSR_BASE=ursr_13_4 EVTC=false\n/'`"
 cccopy="cp $BIN_FILE $daily_bin"
 daily_chmod="find $daily_dir -type f -not -iname *$DATE*.log -exec chmod 644 {} \; >> $daily_log"
 daily_cln="find $daily_archive -mtime +7 -print -delete"
@@ -104,14 +108,14 @@ ERR="cp $daily_log $daily_err"
 errsubj="BUILD_ERROR: XiP$model Config Spec build failed !! : $DATE"
 errtext="BUILD ERROR: see $daily_err"
 subj="XiP$model Config Spec build success : $DATE"
-text="The XiP daily config spec updated and the latest build completed successfully. The following files are available:\n\nBinary image (untested):\n$daily_bin\n\nBuild log file:\n$daily_log\n\nConfig spec used for this build:\n$daily_cfg\n\nPrevious builds are located in the 'archive' directory. Archives will be kept for 1 week, then removed from the repository.\n"
+text="The XiP daily config spec updated and the latest build completed successfully. The following files are available:\n\nBinary image (untested):\n$daily_bin\n\nQt prebuilt package for this build:\n$daily_pkg\n\nConfig spec used for this build:\n$daily_cfg\n\nBuild log file:\n$daily_log\n\nPrevious builds are located in the 'archive' directory. Archives will be kept for 1 week, then removed from the repository.\n"
 
 # Cleanup yesterday's files
 cd $daily_dir > /dev/null 2>&1
 if [ -f *.err ]; then
-    mv -f *.err *.cfg $daily_archerr > /dev/null 2>&1
+    mv -f *.err *.cs *.tgz $daily_archerr > /dev/null 2>&1
 else
-    mv -f *.bin *.cfg $daily_archive > /dev/null 2>&1
+    mv -f *.bin *.cs *.tgz $daily_archive > /dev/null 2>&1
     rm *.log *.txt > /dev/null 2>&1
 fi
 
@@ -128,9 +132,9 @@ fi
 echo -e "$SEP## $csname $SEP" >> $daily_cfg
 cat $new_cs >> $daily_cfg
 echo -e "$SEP## Build Command \n# $ccbuild $SEP" >> $daily_cfg
-csfiles=`ls *.cs 2> /dev/null | wc -l`
+csfiles=`ls *.cfg 2> /dev/null | wc -l`
 if [ "$csfiles" != "0" ]; then
-    rm *.cs
+    rm *.cfg
 fi
 
 cleartool lsview | grep $ccview > /dev/null 2>&1
@@ -178,6 +182,12 @@ else
     # Copy the .bin file
     echo "Executing :: $CPY" >> $daily_log
     echo -e $SEP >> $daily_log
+    basedir=/ccshare/linux/c_files/QtReleases/daily_builds/$model
+
+    if [ $model = "913" ]; then
+        $ccsetview "cd /vobs/vendor/digia/qt; make S=XIP$model prebuilt-package" $ccview >> $daily_log 2>&1
+        $ccsetview "cp $qt_pre $daily_pkg" $ccview >> $daily_log 2>&1
+    fi
     $ccsetview "$cccopy" $ccview >> $daily_log 2>&1
     echo -e $SEP >> $daily_log
 
