@@ -1,0 +1,35 @@
+tell application "System Events"
+	set vpnServer to "eaccess.echostar.com"
+	
+	-- Kill snx if it is already running. 	
+	try
+		set vpnStatus to do shell script "ps ax | grep snx | grep -v grep"
+		display dialog "The Echostar VPN is currently connected, do you want to disconnect?"
+		if result = {button returned:"OK"} then
+			do shell script "snx -d"
+			display dialog "Echostar VPN has been disconnected"
+			-- Delete the vpn.status file
+			do shell script "rm /tmp/vpn.status"
+		end if
+		return
+	on error
+		log "snx is not running"
+	end try
+	
+	-- Get the users password
+	set currentUser to (short user name of (system info))
+	display dialog "Enter your Echostar username" default answer currentUser
+	set the vpnUser to the text returned of the result
+	display dialog "Enter your Echostar password" default answer "" with hidden answer
+	set the vpnPass to the text returned of the result
+	
+	-- Connect to the Echostar VPN
+	do shell script ("expect -c 'spawn -ignore HUP /bin/sh -c \"snx -s " & vpnServer & " -u " & vpnUser & "\"; expect \"*?assword:*\"; send \"" & vpnPass & "\"; send \"\\r\";expect \"24 hours\"' > /tmp/vpn.status 2>&1")
+	
+	-- Wait a bit for the connection to establish
+	delay 10
+	
+	-- Display the results
+	set vpnStatus to (do shell script "cat /tmp/vpn.status")
+	display dialog vpnStatus
+end tell
