@@ -40,9 +40,9 @@ stb_flash ()
         # Passed in a bin file name
         bin=$binfile
     else
-        if [ "$model" = "813" -o "$model" = "110" -o "$model" = "913" -o "$model" = "112"  -o "$model" = "110rc" ]; then
-            hex=/vobs/src_tree/build/link/appcreate/gandalf_dev_debug.bin
-            bin="$view_name"_"$tag""$date_stamp".bin
+        if [ "$model" = "XIP813" -o "$model" = "XIP110" -o "$model" = "XIP913" -o "$model" = "XIP112" -o "$model" = "XIP110RC" -o "$model" = "ZIP110" ]; then
+            hex=/vobs/src_tree/build/link/appcreate/gandalf_dev_debug.update
+            bin="$view_name"_"$tag""$date_stamp".update
             csfile="$view_name"_"$tag""$date_stamp".cs
             cleartool catcs > $basedir/$model/$csfile
         else
@@ -64,7 +64,7 @@ stb_flash ()
     echo "model    : $model"
     echo "bin      : $bin"
     echo "-------------------"
-    box_flash $ip $model $bin        
+    box_flash $ip $model $bin
 }
 
 $exe $*
