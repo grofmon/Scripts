@@ -1,13 +1,13 @@
 #!/bin/sh
 ACTION=$1
 
-cd /ccshare/linux/c_files/monty/stb
+cd /ccshare/linux/c_files/monty/builds
 
 ls *.bin
 
 $ACTION *112*.bin ~/stb/112/ > /dev/null 2>&1
 $ACTION *110_*.bin ~/stb/110/ > /dev/null 2>&1
-$ACTION *110C*.bin ~/stb/110rc/ > /dev/null 2>&1
+$ACTION *110C*.bin ~/stb/110RC/ > /dev/null 2>&1
 $ACTION *813*.bin ~/stb/813/ > /dev/null 2>&1
 $ACTION *913*.bin ~/stb/913/ > /dev/null 2>&1
 
