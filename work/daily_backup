@@ -18,7 +18,8 @@ EXCLUDES=/home/monty/bin/backup_excludes
 # directory to backup
 #BDIR=/home/$USER
 SRC=/
-DST=/media/OneTouch4
+#DST=/media/OneTouch4
+DST=/ccshare/linux/c_files/monty/backup
 
 if [ "$(ls -A $DST)" ]; then
      echo "Take action $DST is not Empty"
