@@ -1,0 +1,1 @@
+/home/monty/config_specs/scripts/tip.sh

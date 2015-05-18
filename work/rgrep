@@ -1,0 +1,56 @@
+#!/bin/bash
+# Kyle Davenport 2006 kdavenpo-at-tx-dot-rr-dot-com
+# you may distribute this script under terms of the GPL
+# http://sdjf.esmartdesign.com/scripts/rgrep.html
+
+grepargs="A:B:CcEe:Ff:GHhilnsvwx"
+usage() { 
+    echo "usage: rgrep [-a] [-d] -$grepargs [search-pattern] [file-pattern]" ;
+    echo " ==> note: grep options default to -Hnis " ;
+    echo " use -a to follow all links"
+    echo " use -d to turn on debugging"
+    exit 1 ;
+}
+
+if [[ $* == *-a* ]]; then
+    follow="-follow"
+    shift
+fi
+if [[ $* == *-d* ]]; then
+    debug=true
+    echo "debugging enabled." >&2
+    shift
+fi
+
+                                   
+[ -z "$*" ] && usage
+while getopts $grepargs arg
+do
+    args="$args -$arg $OPTARG"
+done
+echo $args | grep -q ' -? ' && usage
+[ "$OPTIND" -gt 1 ] && shift $((OPTIND-1))
+files=${2:-\*}
+args=${args:--Hnis}
+if [ -d "$files" ]; then
+    dir="$files"
+    files='*'
+else    
+    dir=`dirname "$files"`
+    files=`basename "$files"`
+fi
+count=0
+match=0
+echo EOR > /tmp/eor
+${debug:-false} && echo "Search for \"$1\" in \"$dir/$files\" files with \"grep $args\"..." >&2
+find $dir $follow -type f -name "$files" 2>/dev/null | cat - /tmp/eor | while read line; do
+    if [ "$line" == EOR ]; then
+        [ $count -eq 0 ] && { echo 'no files found!' >&2 ; exit -1; }
+        [ $match -eq 0 ] && { echo "no matches found in $count files" >&2 ; exit -2; }
+        exit 0
+    fi
+    ${debug:-false} && echo "-->$line" >&2
+    count=$((++count))
+    grep --color=auto $args -- "$1" "$line" && match=1
+done
+rm -f /tmp/eor
