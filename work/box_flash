@@ -42,7 +42,7 @@ set home_dir         "/home/monty/stb"
 
 set mount_cmd        "mount -o nolock $ip_address:$home_dir /home \r"
 set cd_cmd           "cd /home/$model \r"
-set mtd_update_cmd   "./mtd_update -bin $bin \r"
+set mtd_update_cmd   "./$bin \r"
 set reboot_cmd       "reboot;exit \r"; 
 
 for {set x 0} {$x<120} {incr x} {
@@ -73,7 +73,7 @@ send $mtd_update_cmd
 
 # Setup the reboot command
 set timeout -1
-expect " Update Complete"
+expect "Update Complete"
 send $reboot_cmd
 
 interact
