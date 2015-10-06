@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+
+# usage: stripiT.rb file1.m4a file2.m4a file3.m4a
+# automatically outputs to file1 - stripped.m4a, file2 - stripped.m4a, and so on.
+
+# Script to remove extraneous/unwanted atoms from iTunes purchased files by way of AtomicParsley.
+# Output should be comparable to the atoms left over after reencoding the file in iTunes itself.
+# I only care about songs, so I have no clue how well this applies to video files
+# Some information taken from: https://code.google.com/p/mp4v2/wiki/iTunesMetadata
+
+# atoms to remove:
+# moov.udta.meta.ilst.apID # apple account email address
+# moov.udta.meta.ilst.atID # artist-track ID
+# moov.udta.meta.ilst.cnID # iTunes Catalog ID
+# moov.udta.meta.ilst.geID # genre ID
+# moov.udta.meta.ilst.plID # playlist ID (identifies album)
+# moov.udta.meta.ilst.sfID # iTunes store identifier (location/number)
+# moov.udta.meta.ilst.cprt # copyright information
+# moov.udta.meta.ilst.flvr # bitrate/video size information?
+# moov.udta.meta.ilst.purd # date purchased
+# moov.udta.meta.ilst.rtng # Explicit/Clean information
+# moov.udta.meta.ilst.soal # Album sort name
+# moov.udta.meta.ilst.stik # media type information
+# moov.udta.meta.ilst.xid  # vendor xID
+# moov.udta.meta.ilst.----.name:[iTunMOVI] # some embedded plist thing, contains filesize and flavor.
+# moov.trak.mdia.minf.stbl.stsd.mp4a.pinf # purchase information?
+
+# Notes:
+# [pinf] contains personal info, such as the name attached to the apple account.
+#        It requires --DeepScan to remove.
+# [apID] contains the email address attached to the itunes account used to purchase.
+# [purd] contains date/time of purchase
+# [sfID] contains store information, including the country it was purchased in.
+
+ARGV.each {|track|
+    infile = File.expand_path( track )
+    outfile = infile.gsub( /\.([^\.]+?)$/, " - stripped.\\1" )
+    command = "AtomicParsley \"#{infile}\" --DeepScan --manualAtomRemove \"moov.trak.mdia.minf.stbl.stsd.mp4a.pinf\""
+    ["apID","atID","cnID","geID","plID","sfID","cprt","flvr","purd","rtng","soal","stik","xid ","ownr","----.name:[iTunMOVI]","----.name:[ENCODEDBY]","----.name:[LYRICIST]","----.name:[MIXARTIST]","----.name:[ORIGFILENAME]","----.name:[PUBLISHER]"].each {|atom|
+        command += " --manualAtomRemove \"moov.udta.meta.ilst.#{atom}\""
+    }
+    command += " --encodingTool \"\" --encodedBy \"\" --description \"\" --lyrics \"\" --genre \"\" --comment \"\" --grouping \"\""
+    command += " -o \"#{outfile}\""
+    process = IO.popen( command )
+    while ( status = process.gets )
+        puts( status )
+    end
+}
