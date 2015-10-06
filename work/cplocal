@@ -1,5 +1,12 @@
 #!/bin/sh
 date_stamp=`date +%m%d%y`
+
+#check to see if variable passed in starts with a number
+if [[ $1 = [0-9]* ]]; then
+   echo "Resetting date to $1"
+   date_stamp=$1
+fi
+
 basedir=/ccshare/linux/c_files/QtReleases/daily_builds
 if [ "$1" = "-v" ]; then
     #echo "Files to be copied:"
@@ -9,14 +16,14 @@ if [ "$1" = "-v" ]; then
     cp -v $basedir/XIP112/*112*$date_stamp*update /home/monty/stb/112/ 2>/dev/null
     cp -v $basedir/XIP813/*813*$date_stamp*update /home/monty/stb/813/ 2>/dev/null
     cp -v $basedir/XIP913/*913*$date_stamp*update /home/monty/stb/913/ 2>/dev/null
-    cp -v $basedir/ZIP110/*110*$date_stamp*update /home/monty/stb/110Z/ 2>/dev/null
+    #cp -v $basedir/ZIP110/*110*$date_stamp*update /home/monty/stb/110Z/ 2>/dev/null
 else
     find $basedir -maxdepth 2 -name "*$date_stamp*.update" -exec basename {} \;
-    cp $basedir/XIP110rc/*110RC*$date_stamp*update /home/monty/stb/110rc/ 2>/dev/null
+    cp $basedir/XIP110RC/*110RC*$date_stamp*update /home/monty/stb/110rc/ 2>/dev/null
     cp $basedir/XIP110/*110*$date_stamp*update /home/monty/stb/110/ 2>/dev/null
     cp $basedir/XIP112/*112*$date_stamp*update /home/monty/stb/112/ 2>/dev/null
     cp $basedir/XIP813/*813*$date_stamp*update /home/monty/stb/813/ 2>/dev/null
     cp $basedir/XIP913/*913*$date_stamp*update /home/monty/stb/913/ 2>/dev/null
-    cp $basedir/ZIP110/*110*$date_stamp*update /home/monty/stb/110Z/ 2>/dev/null
+    #cp $basedir/ZIP110/*110*$date_stamp*update /home/monty/stb/110Z/ 2>/dev/null
 fi
 echo "done."

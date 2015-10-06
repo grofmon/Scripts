@@ -1,9 +1,9 @@
 #!/bin/sh
 
 array=( XIP110 XIP110RC XIP112 XIP813 XIP913 ZIP110 )
-#array=( 813 913 )
+#array=( XIP813 XIP913 )
 
-mailto="montgomery.groff@echostar.com"
+mailto="montgomery.groff@echostar.com, david.innes@echostar.com, greg.greene@echostar.com, terry.pattison@echostar.com"
 mailfr="QT-CS-Check"
 
 for prod in "${array[@]}"
@@ -11,9 +11,9 @@ do
 datefile="`date '+%a %b %d %Y'` at `date '+%T %Z'`"
 bin_dir=/home/monty/bin
 tmp_file=/tmp/"$prod"_cs_update
-csprevious=`ls -t /home/monty/config_specs/"$prod"/*.cs | head -2 | tail -1`
-cscurrent=`ls -t /home/monty/config_specs/"$prod"/*.cs | head -1`
-csfile=`echo $cscurrent | sed "s/\/home\/monty\/config_specs\/$prod\///g"`
+csprevious=`ls -t /ccshare/linux/c_files/monty/config_specs/"$prod"/*.cs | head -2 | tail -1`
+cscurrent=`ls -t /ccshare/linux/c_files/monty/config_specs/"$prod"/*.cs | head -1`
+csfile=`echo $cscurrent | sed "s/\/ccshare\/linux\/c_files\/monty\/config_specs\/$prod\///g"`
 newcs=`echo $csfile | sed "s/\.cs/\.cfg/"`
 dateprevious=`date -r $csprevious '+%m%d%y_%H00'`
 datecurrent=`date -r $cscurrent '+%m%d%y_%H00'`
