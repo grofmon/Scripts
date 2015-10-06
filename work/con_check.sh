@@ -1,1 +1,0 @@
-/ccshare/linux/c_files/rocky/Tools/con_check.sh
