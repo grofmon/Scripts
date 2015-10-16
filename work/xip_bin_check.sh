@@ -10,7 +10,9 @@ for prod in "${array[@]}"
 do
 bin_dir=/home/monty/bin
 motfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1`
-binfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1 | cut -d'.' -f1 | cut -d'/' -f6`.bin
+#binfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1 | cut -d'.' -f1 | cut -d'/' -f6`.bin
+
+binfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1 | cut -d'.' -f1 | cut -d'/' -f6`.mot
 
 #echo "Mot file to convert: $motfile"
 #echo "Bin file to create:  $binfile"
@@ -28,7 +30,6 @@ elif [ $prod = XiP913Update ]; then
 fi           
 
 outfile=/home/monty/stb/$model/$binfile
-
 
 # First, check to see if the latest bin file is available
 if [ -f $motfile ]; then
@@ -54,7 +55,8 @@ if [ -f $motfile ]; then
         semaphore_acquire
 
         # Convert the mot file to a binary
-        objcopy -I srec -O binary $motfile $outfile
+#        objcopy -I srec -O binary $motfile $outfile
+        cp $motfile $outfile
 
         if [ -f /usr/bin/mailx ]; then
             echo -e "New binfile available here: $outfile" | mailx -n -s "xip bin file update for XiP$model" -r "$mailfr" "$mailto"
