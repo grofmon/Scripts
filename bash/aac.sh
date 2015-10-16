@@ -1,7 +1,7 @@
 #!/bin/sh
 INPUT=$1
-XLD="/Users/monty/Dropbox/Scripts/bin/xld"
-AP="/Users/monty/Dropbox/Scripts/bin/ap"
+XLD=~/.xld
+AP=~/.ap
 OUTDIR="/Users/monty/Downloads/"
 
 if [ ! -z "$2" ]; then
@@ -20,7 +20,7 @@ BASE=`basename $0`
 TMPDIR=`mktemp -d /tmp/${BASE}.XXXX` || exit 1
 
 # Convert the files from FLAC to AAC
-find "$INPUT" -type f \( -iname "*.flac" -o -iname "*.mp3" \) -execdir $XLD -f aac {} -o "$TMPDIR" \;
+find "$INPUT" -type f \( -iname "*.flac" -o -iname "*.mp3" \) -exec $XLD -f aac {} -o "$TMPDIR" \;
 
 # Remove encoding atoms and move to ITUNES 
 find "$TMPDIR" -iname "*m4a" -exec $AP {} --encodingTool "" --encodedBy "" --overWrite \;
