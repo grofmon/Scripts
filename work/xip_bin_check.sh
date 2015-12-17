@@ -1,6 +1,6 @@
 #!/bin/sh
 
-array=( XIP110Update XiP110CRUpdate XiP112Update XIP813Update XiP913Update )
+array=( XIP110Update XiP110CRUpdate XiP112Update XIP813Update XiP913Update ZiP110Update ZiP1018Update HEVC211Update )
 
 #mailto="Engineering.SWXiPProjectleads@echostar.com, Engineering.EVTC@echostar.com, Engineering-SuperJoey@echostar.com"
 mailto="montgomery.groff@echostar.com"
@@ -27,6 +27,10 @@ elif [ $prod = XIP813Update ]; then
     model=813
 elif [ $prod = XiP913Update ]; then
     model=913
+elif [ $prod = ZiP1018Update ]; then
+    model=1018
+elif [ $prod = ZiP110Update ]; then
+    model=110z
 fi           
 
 outfile=/home/monty/stb/$model/$binfile
