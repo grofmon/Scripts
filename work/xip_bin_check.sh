@@ -1,6 +1,6 @@
 #!/bin/sh
 
-array=( XIP110Update XiP110CRUpdate XiP112Update XIP813Update XiP913Update )
+array=( XIP110Update XiP110CRUpdate XiP112Update XIP813Update XiP913Update ZiP110Update ZiP1018Update HEVC211Update )
 
 #mailto="Engineering.SWXiPProjectleads@echostar.com, Engineering.EVTC@echostar.com, Engineering-SuperJoey@echostar.com"
 mailto="montgomery.groff@echostar.com"
@@ -10,7 +10,9 @@ for prod in "${array[@]}"
 do
 bin_dir=/home/monty/bin
 motfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1`
-binfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1 | cut -d'.' -f1 | cut -d'/' -f6`.bin
+#binfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1 | cut -d'.' -f1 | cut -d'/' -f6`.bin
+
+binfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1 | cut -d'.' -f1 | cut -d'/' -f6`.mot
 
 #echo "Mot file to convert: $motfile"
 #echo "Bin file to create:  $binfile"
@@ -25,10 +27,13 @@ elif [ $prod = XIP813Update ]; then
     model=813
 elif [ $prod = XiP913Update ]; then
     model=913
+elif [ $prod = ZiP1018Update ]; then
+    model=1018
+elif [ $prod = ZiP110Update ]; then
+    model=110z
 fi           
 
 outfile=/home/monty/stb/$model/$binfile
-
 
 # First, check to see if the latest bin file is available
 if [ -f $motfile ]; then
@@ -54,7 +59,8 @@ if [ -f $motfile ]; then
         semaphore_acquire
 
         # Convert the mot file to a binary
-        objcopy -I srec -O binary $motfile $outfile
+#        objcopy -I srec -O binary $motfile $outfile
+        cp $motfile $outfile
 
         if [ -f /usr/bin/mailx ]; then
             echo -e "New binfile available here: $outfile" | mailx -n -s "xip bin file update for XiP$model" -r "$mailfr" "$mailto"
