@@ -1,6 +1,7 @@
 #!/bin/sh
 INPUT=$1
-AP="/Users/monty/Library/Mobile Documents/com~apple~ScriptEditor2/Documents/bin/ap"
+AP=~/.ap
+#AP="/Users/monty/Library/Mobile Documents/com~apple~ScriptEditor2/Documents/bin/ap"
 
 if [ -z "$INPUT" ]; then
     echo "Please specify the INPUT directory"
