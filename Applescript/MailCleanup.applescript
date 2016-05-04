@@ -5,7 +5,7 @@ tell application "Finder"
 end tell
 *)
 
-property theAcctList : {"Echostar", "Gmail"}
+property theAcctList : {"Echostar"}
 property theMboxList : {"Archive", "newsletters", "support org", "political", "denver trail runners"}
 
 tell application "Mail" to activate
