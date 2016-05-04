@@ -40,7 +40,8 @@ ARGV.each {|track|
         command += " --manualAtomRemove \"moov.udta.meta.ilst.#{atom}\""
     }
     command += " --encodingTool \"\" --encodedBy \"\" --description \"\" --lyrics \"\" --genre \"\" --comment \"\" --grouping \"\""
-    command += " -o \"#{outfile}\""
+#   command += " -o \"#{outfile}\""
+    command += " --overWrite"
     process = IO.popen( command )
     while ( status = process.gets )
         puts( status )
