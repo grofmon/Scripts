@@ -1,12 +1,12 @@
 #!/bin/bash
 # Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
-exec > >(tee -a ~/Library/Logs/herbie-lou-update.log)
-exec 2> >(tee -a ~/Library/Logs/herbie-lou-update.log >&2)
+exec > >(tee -a ~/Library/Logs/bowie-lou-update.log)
+exec 2> >(tee -a ~/Library/Logs/bowie-lou-update.log >&2)
 
 #!/bin/bash
 src_dir="/Volumes/monty/"
 dst_dir="/Users/monty/"
-music_dir="Music/iTunes/iTunes Media/"
+music_dir="Music/iTunes/"
 image_dir="Pictures/"
 #EXCL="--exclude *.aplibrary"
 
@@ -17,12 +17,12 @@ dst_image=$dst_dir$image_dir
 
 usage()
 {
-    echo " Usage: ./herbie-lou-update"
+    echo " Usage: ./bowie-lou-update"
     echo ""
 }     
 
 if [ ! -d $src_dir ]; then
-    open afp://Herbie.local/monty
+    open afp://Bowie.local/monty
     sleep 10
 fi
 
@@ -30,11 +30,11 @@ if [ -d $src_dir ]; then
     echo "--------"
     echo `date`
     echo "## Update $dst_music using rsync"
-    echo "rsync -av --delete $src_music $dst_music"
-    time rsync -av --delete "$src_music" "$dst_music"
+    echo "rsync -av --delete --stats $src_music $dst_music"
+    time rsync -av --delete --stats "$src_music" "$dst_music"
     echo "## Update $dst_image using rsync"
-    echo "rsync -av --delete $src_image $dst_image"
-    time rsync -av --delete --exclude 'Photos Library.photoslibrary' $src_image $dst_image
+    echo "rsync -av --delete --sats $src_image $dst_image"
+    time rsync -av --delete --stats --exclude 'Photos Library.photoslibrary' $src_image $dst_image
 else
     echo "$src_dir Not Mounted"
 fi

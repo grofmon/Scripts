@@ -1,0 +1,33 @@
+#!/bin/bash
+# Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
+exec > >(tee -a ~/Library/Logs/update-itunes.log)
+exec 2> >(tee -a ~/Library/Logs/update-itunes.log >&2)
+
+#!/bin/bash
+src_dir="/Volumes/monty/"
+dst_dir="/Users/monty/"
+music_dir="Music/iTunes/"
+
+src_music=$src_dir$music_dir
+dst_music=$dst_dir$music_dir
+
+usage()
+{
+    echo " Usage: ./update-itunes"
+    echo ""
+}     
+
+if [ ! -d $src_dir ]; then
+    open afp://Bowie.local/monty
+    sleep 10
+fi
+
+if [ -d $src_dir ]; then
+    echo "--------"
+    echo `date`
+    echo "## Update $dst_music using rsync"
+    echo "rsync -av --delete --stats $src_music $dst_music"
+    time rsync -av --delete --stats "$src_music" "$dst_music"
+else
+    echo "$src_dir Not Mounted"
+fi

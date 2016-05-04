@@ -1,0 +1,34 @@
+#!/bin/bash
+# Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
+exec > >(tee -a ~/Library/Logs/update-pictures.log)
+exec 2> >(tee -a ~/Library/Logs/update-pictures.log >&2)
+
+#!/bin/bash
+src_dir="/Volumes/monty/"
+dst_dir="/Users/monty/"
+image_dir="Pictures/"
+#EXCL="--exclude *.aplibrary"
+
+src_image=$src_dir$image_dir
+dst_image=$dst_dir$image_dir
+
+usage()
+{
+    echo " Usage: ./update-pictures"
+    echo ""
+}     
+
+if [ ! -d $src_dir ]; then
+    open afp://Bowie.local/monty
+    sleep 10
+fi
+
+if [ -d $src_dir ]; then
+    echo "--------"
+    echo `date`
+    echo "## Update $dst_image using rsync"
+    echo "rsync -av --delete --stats  $src_image $dst_image"
+    time rsync -av --delete --stats --exclude 'Photos Library.photoslibrary' $src_image $dst_image
+else
+    echo "$src_dir Not Mounted"
+fi
