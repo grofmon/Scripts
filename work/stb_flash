@@ -10,6 +10,18 @@ view_name=`echo $CLEARCASE_ROOT | sed 's/\/view\///g'`
 ip=$1
 model=$2
 binfile=$3
+if [ "$model" = "813" -o "$model" = "110" -o "$model" = "913" -o "$model" = "112" ]; then
+    BF=XIP"$model"
+fi
+if [ "$model" = "110rc" ]; then
+    BF=XIP110RC
+fi
+if [ "$model" = "1018" ]; then
+    BF=ZIP"$model"
+fi
+if [ "$model" = "110z" ]; then
+    BF=ZIP110
+fi
 
 
 usage ()
