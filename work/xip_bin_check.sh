@@ -1,18 +1,19 @@
 #!/bin/sh
 
-array=( XIP110Update XiP110CRUpdate XiP112Update XIP813Update XiP913Update ZiP110Update ZiP1018Update HEVC211Update )
+array=( XiP112Update XIP813Update XiP913Update ZiP110Update ZiP1018Update )
+#array=( XIP110Update XiP110CRUpdate XiP112Update XIP813Update XiP913Update ZiP110Update ZiP1018Update HEVC211Update )
 
-#mailto="Engineering.SWXiPProjectleads@echostar.com, Engineering.EVTC@echostar.com, Engineering-SuperJoey@echostar.com"
 mailto="montgomery.groff@echostar.com"
 mailfr="XIP-Bin-Check"
 
 for prod in "${array[@]}"
 do
 bin_dir=/home/monty/bin
-motfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1`
+updatefile=`ls -t /ccshare/linux/c_files/"$prod"/*.update | head -1`
+#motfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1`
 #binfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1 | cut -d'.' -f1 | cut -d'/' -f6`.bin
 
-binfile=`ls -t /ccshare/linux/c_files/"$prod"/*.mot | head -1 | cut -d'.' -f1 | cut -d'/' -f6`.mot
+binfile=`ls -t /ccshare/linux/c_files/"$prod"/*.update | head -1 | cut -d'.' -f1 | cut -d'/' -f6`.update
 
 #echo "Mot file to convert: $motfile"
 #echo "Bin file to create:  $binfile"
@@ -36,7 +37,7 @@ fi
 outfile=/home/monty/stb/$model/$binfile
 
 # First, check to see if the latest bin file is available
-if [ -f $motfile ]; then
+if [ -f $updatefile ]; then
 # Second, check to see if we have already converted the mot to binary
 # -- if file has been converted, skip it
     if [ ! -f $outfile ]; then
@@ -60,7 +61,8 @@ if [ -f $motfile ]; then
 
         # Convert the mot file to a binary
 #        objcopy -I srec -O binary $motfile $outfile
-        cp $motfile $outfile
+#        cp $motfile $outfile
+        cp $updatefile /home/monty/stb/$model/
 
         if [ -f /usr/bin/mailx ]; then
             echo -e "New binfile available here: $outfile" | mailx -n -s "xip bin file update for XiP$model" -r "$mailfr" "$mailto"
