@@ -1,0 +1,12 @@
+#!/bin/sh
+if [ ! -d "/Volumes/ccshare" ]; then
+    mkdir /Volumes/ccshare
+    sudo mount -t nfs -o resvport 10.73.201.64:/ccshare /Volumes/ccshare
+fi
+if [ ! -d "/Volumes/engineering" ]; then
+    #open 'smb://inwpifil04/engineering'
+    osascript -e "mount volume \"smb://inwpifil04/engineering\"" &>/dev/null
+fi
+
+
+echo "Drives mounted!"

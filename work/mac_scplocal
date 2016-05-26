@@ -1,0 +1,41 @@
+#!/bin/sh
+date_stamp=`date +%m%d%y`
+
+#check to see if variable passed in starts with a number
+if [[ $1 = [0-9]* ]]; then
+   echo "Resetting date to $1"
+   date_stamp=$1
+fi
+
+basedir=/ccshare/linux/c_files/builds_carbon
+workdir=/Users/monty/stb
+
+copy_files() {
+    #scp inlpeteam1:$basedir/XIP110RC/*110RC*$date_stamp*update $workdir/110rc/
+
+    #scp inlpeteam1:$basedir/XIP110/*110*$date_stamp*update $workdir/110/
+
+    #scp inlpeteam1:$basedir/XIP112/*112*$date_stamp*update $workdir/112/
+
+    #scp inlpeteam1:$basedir/XIP813/*813*$date_stamp*update $workdir/813/
+
+    #scp inlpeteam1:$basedir/XIP913/*913*$date_stamp*update $workdir/913/
+
+    #scp inlpeteam1:$basedir/ZIP110/*110*$date_stamp*update $workdir/110z/
+
+    scp inlpeteam1:$basedir/ZIP1018/*1018*$date_stamp*update $workdir/1018/
+}
+
+ssh inlpeteam1 "find $basedir -maxdepth 2 -name '*$date_stamp*.update' -exec basename {} \; | grep -v HEVC | grep -v 'XIP11' | grep -v 813"
+
+read -r -p "Do you want to copy all of these files? [y/N] " response
+case $response in
+    [yY][eE][sS]|[yY]) 
+        copy_files
+        ;;
+    *)
+        exit
+        ;;
+esac
+
+echo "done."

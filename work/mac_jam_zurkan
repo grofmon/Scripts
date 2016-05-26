@@ -1,0 +1,82 @@
+#!/usr/bin/expect -f
+
+################################################################################
+# Expect script to telnet to a given 
+# ip address and program flash.
+# 
+# Author          : Montgomery Groff
+# Original Author : Vijay.Jayaraman
+# Version         : 1.3
+# Last Updated    : 10-12-2013
+#
+# 1.3 - Removed kill command, mtd_update now kill threads
+# 1.2 - Removed reboot to start and added kill command
+# 1.1 - Added support for reboot before running mtd_update
+# 1.0 - Copied tnet script and modified for flashing the box
+#
+set box_flash_version "1.2"
+################################################################################
+
+#puts "box_flash script version: $box_flash_version"
+
+if {$argc != 1} {
+        puts "Usage: jam-zurkan <bin file>"
+        puts "Ex: jam-zurkan zip1018_dev.update"
+        exit
+}
+
+# Un-comment "log_user 0" for silent operation
+log_user 0
+set timeout 2
+set ip "192.168.100.107"
+set model "1018"
+set bin [lindex $argv 0]
+set prompt "~ #"
+
+################################################################################
+# User customizable variables - Please customize this for your setup.
+################################################################################
+set ip_address       "192.168.100.111"
+set home_dir         "/Users/monty/stb"
+################################################################################
+
+set mount_cmd        "mount -o nolock $ip_address:$home_dir /home \r"
+set cp_cmd           "cp /home/$model/$bin /mnt/MISC_HD \r"
+set mtd_update_cmd   "/mnt/MISC_HD/$bin \r"
+set delete_cmd       "rm /mnt/MISC_HD/$bin \r"
+set reboot_cmd       "reboot;exit \r"; 
+
+for {set x 0} {$x<120} {incr x} {
+    # Open a telnet session to a remote server, and wait for a username prompt.
+    spawn telnet $ip
+
+    # Expect a timeout and then retry again.
+    expect {
+        timeout    {continue}
+ 	"login:"   {puts "Ready to proceed\n"; send "root\r"; break}
+    }
+}
+
+# Start logging to stdout
+log_user 1
+
+# Mount to nfs share on host
+expect $prompt
+send $mount_cmd
+
+# Copy the file locally
+expect $prompt
+send $cp_cmd
+
+# Setup the mtd_update command
+set timeout -1
+expect $prompt
+send $mtd_update_cmd
+
+# Setup the reboot command
+set timeout -1
+expect "Update Complete"
+send $delete_cmd
+send $reboot_cmd
+
+interact

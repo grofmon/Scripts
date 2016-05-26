@@ -1,0 +1,38 @@
+#!/bin/sh
+date_stamp=`date +%m%d%y`
+
+#check to see if variable passed in starts with a number
+if [[ $1 = [0-9]* ]]; then
+   echo "Resetting date to $1"
+   date_stamp=$1
+fi
+
+if [ ! -d "/Volumes/ccshare" ]; then
+#echo "mkdir"
+#    mkdir /Volumes/ccshare
+#echo "mount"
+#    sudo mount -t nfs -o resvport 10.73.201.64:/ccshare /Volumes/ccshare
+    osascript -e 'mount volume "smb://10.79.97.99/ccshare"'
+fi
+
+basedir=/Volumes/ccshare/linux/c_files/builds_carbon/ZIP1018
+workdir=/Users/monty/stb
+
+#find $basedir -maxdepth 2 -name "*$date_stamp*.update" -exec basename {} \; | grep -v HEVC | grep -v XIP11 | grep -v 813 | grep -v
+find $basedir -maxdepth 2 -name "*$date_stamp*.update" -exec basename {} \;
+
+#cp $basedir/XIP110RC/*110RC*$date_stamp*update $workdir/110rc/ 2>/dev/null
+
+#cp $basedir/XIP110/*110*$date_stamp*update $workdir/110/ 2>/dev/null
+
+#cp $basedir/XIP112/*112*$date_stamp*update $workdir/112/ 2>/dev/null
+
+#cp $basedir/XIP813/*813*$date_stamp*update $workdir/813/ 2>/dev/null
+
+#cp $basedir/XIP913/*913*$date_stamp*update $workdir/913/ 2>/dev/null
+
+#cp $basedir/ZIP110/*110*$date_stamp*update $workdir/110z/ 2>/dev/null
+
+cp $basedir/ZIP1018/*1018*$date_stamp*update $workdir/1018/ 2>/dev/null
+
+echo "done."
