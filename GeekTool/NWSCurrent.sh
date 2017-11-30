@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PYTHON=/usr/bin/python
-ULTIMATEWEATHER=~/Library/Scripts/GeekTool/ultimateweather/ultimate_weather_parser.py
+ULTIMATEWEATHER=~/Documents/Scripts/GeekTool/ultimateweather/ultimate_weather_parser.py
 CURRENT=/tmp/geektool/usnws_current.txt
 
 #US National Weather Service

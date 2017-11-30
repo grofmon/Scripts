@@ -16,10 +16,10 @@ fi
 #fi
 
 basedir=/ccshare/linux/c_files/builds_carbon
-workdir=/Users/monty/Documents/stb
+#workdir=/Users/monty/stb
 
-find $basedir -maxdepth 2 -name "*$date_stamp*.update" -exec basename {} \; | grep -v HEVC | grep -v XIP11
-#find $basedir -maxdepth 2 -name "*$date_stamp*.update" -exec basename {} \;
+#find $basedir -maxdepth 2 -name "*$date_stamp*.update" -exec basename {} \; | grep -v HEVC | grep -v XIP11 | grep -v 813 | grep -v
+find $basedir -maxdepth 2 -name "*$date_stamp*.update" -exec basename {} \;
 
 #cp $basedir/XIP110RC/*110RC*$date_stamp*update $workdir/110rc/ 2>/dev/null
 
@@ -27,12 +27,12 @@ find $basedir -maxdepth 2 -name "*$date_stamp*.update" -exec basename {} \; | gr
 
 #cp $basedir/XIP112/*112*$date_stamp*update $workdir/112/ 2>/dev/null
 
-cp $basedir/XIP813/*813*$date_stamp*update $workdir/813/ 2>/dev/null
+#cp $basedir/XIP813/*813*$date_stamp*update $workdir/813/ 2>/dev/null
 
-cp $basedir/XIP913/*913*$date_stamp*update $workdir/913/ 2>/dev/null
+#cp $basedir/XIP913/*913*$date_stamp*update $workdir/913/ 2>/dev/null
 
-cp $basedir/ZIP110/*110*$date_stamp*update $workdir/110z/ 2>/dev/null
+#cp $basedir/ZIP110/*110*$date_stamp*update $workdir/110z/ 2>/dev/null
 
-cp $basedir/ZIP1018/*1018*$date_stamp*update $workdir/1018/ 2>/dev/null
+#cp $basedir/ZIP1018/*1018*$date_stamp*update $workdir/1018/ 2>/dev/null
 
-echo "done."
+

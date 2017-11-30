@@ -1,0 +1,33 @@
+#!/bin/bash
+param=$1
+exclude='--exclude "*.photoslibrary"'
+
+get_pw=`security 2>&1 >/dev/null find-generic-password -ga monty |ruby -e 'print $1 if STDIN.gets =~ /^password: "(.*)"$/'`
+
+mkdir /Volumes/monty
+mount_afp afp://monty:"$get_pw"@Bowie.local/monty /Volumes/monty
+#open -W afp://Bowie.local/monty
+ret=$?
+if [ $ret != 0 ]; then
+    echo "error mounting $src_dir"
+    exit 1
+fi
+
+src_dir="/Volumes/monty/"
+dst_dir="/Users/monty/"
+music_dir="Music/"
+image_dir="Pictures/"
+
+src_music=$src_dir$music_dir
+dst_music=$dst_dir$music_dir
+src_image=$src_dir$image_dir
+dst_image=$dst_dir$image_dir
+
+mv ~/Library/Logs/bowie-lou-update.log ~/Library/Logs/bowie-lou-update.prev
+exec &> >(tee -a ~/Library/Logs/bowie-lou-update.log)
+echo -e "\n-------- `date` --------"
+set -x
+time rsync $param -av --delete --stats "$src_music" "$dst_music"
+time rsync $param -av --delete --stats $exclude "$src_image" "$dst_image"
+
+umount /Volumes/monty

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>Label</key>
+        <string>com.checkpoint.eps.gui</string>
+        <key>ProgramArguments</key>
+        <array>
+                <string>open</string>
+                <string>-a</string>
+                <string>/Library/Application Support/Checkpoint/Endpoint Security/Endpoint Connect/Endpoint Security VPN.app</string>
+        </array>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>ServiceIPC</key>
+        <false/>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>stand-alone-mode</key>
+		<string>false</string>
+	</dict>
+</dict>
+</plist>

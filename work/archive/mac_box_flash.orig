@@ -19,9 +19,9 @@ set box_flash_version "1.2"
 
 #puts "box_flash script version: $box_flash_version"
 
-if {$argc != 4} {
+if {$argc != 3} {
         puts "Usage: box_flash <ip address> <model id> <bin file>"
-        puts "Ex: box_flash 192.168.1.202 813 xip813_dev.bin 10.74.16.80"
+        puts "Ex: box_flash 192.168.1.202 813 xip813_dev.bin"
         exit
 }
 
@@ -31,15 +31,13 @@ set timeout 2
 set ip [lindex $argv 0]
 set model [lindex $argv 1]
 set bin [lindex $argv 2]
-set host_ip [lindex $argv 3]
 set prompt "~ #"
 
 ################################################################################
 # User customizable variables - Please customize this for your setup.
 ################################################################################
-#set ip_address       "192.168.0.2"
-set ip_address       $host_ip
-set home_dir         "/Users/monty/Documents/stb"
+set ip_address       "192.168.0.2"
+set home_dir         "/Users/monty/stb"
 ################################################################################
 
 set mount_cmd        "mount -o nolock $ip_address:$home_dir /home \r"

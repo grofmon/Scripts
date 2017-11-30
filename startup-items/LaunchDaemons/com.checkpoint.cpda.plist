@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>Label</key>
+        <string>com.checkpoint.cpda</string>
+        <key>ProgramArguments</key>
+        <array>
+                <string>/Library/Application Support/Checkpoint/Endpoint Security/cpda</string>
+        </array>
+        <key>WorkingDirectory</key>
+        <string>/Library/Application Support/Checkpoint/Endpoint Security</string>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>KeepAlive</key>
+       	<true/>
+        <key>EnvironmentVariables</key>
+        <dict>
+        	<key>FWDIR</key>
+		<string>/Library/Application Support/Checkpoint/Endpoint Security</string>
+        	<key>CPDIR</key>
+		<string>/Library/Application Support/Checkpoint/Endpoint Security</string>
+        	<key>CPTMPDIR</key>
+		<string>/Library/Application Support/Checkpoint/Endpoint Security/tmp</string>
+
+        </dict>
+</dict>
+</plist>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.checkpoint.user</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Library/Application Support/Checkpoint/Endpoint Security/UserServer</string>
+	</array>
+	<key>KeepAlive</key>
+	<true/>
+	<key>EnvironmentVariables</key>
+		<dict>
+		<key>DYLD_INSERT_LIBRARIES</key>
+		<string>/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation</string>
+		<key>DYLD_LIBRARY_PATH</key>
+		<string>/Library/Application Support/Checkpoint/Endpoint Security</string>
+	</dict>
+</dict>
+</plist>

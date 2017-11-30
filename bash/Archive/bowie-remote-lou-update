@@ -1,0 +1,22 @@
+#!/bin/bash
+# Redirect stdout ( > ) into a named pipe ( >() ) running "tee"
+exec > >(tee -a ~/Library/Logs/bowie-remote-lou-update.log)
+exec 2> >(tee -a ~/Library/Logs/bowie-remote-lou-update.log >&2)
+
+param=$1
+exclude="--exclude *.photoslibrary"
+
+src_dir="bowie.273244040.members.btmm.icloud.com:/Users/monty/"
+dst_dir="/Users/monty/"
+music_dir="Music/iTunes/"
+image_dir="Pictures/"
+
+src_music=$src_dir$music_dir
+dst_music=$dst_dir$music_dir
+src_image=$src_dir$image_dir
+dst_image=$dst_dir$image_dir
+
+echo "-------- `date` --------"
+set -x
+time rsync $param -e ssh -av --delete --stats "$src_music" "$dst_music"
+time rsync $param -e ssh -av --delete --stats $exclude "$src_image" "$dst_image"

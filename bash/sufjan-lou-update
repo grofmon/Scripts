@@ -20,7 +20,7 @@ else
     src_dir="bowie.273244040.members.btmm.icloud.com:/Users/monty/"
 fi
 dst_dir="/Users/monty/"
-music_dir="Music/iTunes/iTunes\ Media/"
+music_dir="Music/iTunes/iTunes\ Media/Music/"
 image_dir="Pictures/"
 
 src_music=$src_dir$music_dir
@@ -32,8 +32,8 @@ mv ~/Library/Logs/bowie-lou-update.log ~/Library/Logs/bowie-lou-update.prev
 exec &> >(tee -a ~/Library/Logs/bowie-lou-update.log)
 echo -e "\n-------- `date` --------"
 set -x
-#time rsync $param -e ssh -av --delete --dry-run --stats "$src_music" "$dst_music"
-time rsync $param -e ssh -av --delete --stats $exclude "$src_image" "$dst_image"
+time rsync $param -e ssh -av --stats "$src_music" "$dst_music"
+#time rsync $param -e ssh -av --delete --stats $exclude "$src_image" "$dst_image"
 set +x
 
 if [ "$1" = "local" ]; then
